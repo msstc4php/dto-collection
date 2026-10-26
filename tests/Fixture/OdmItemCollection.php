@@ -6,6 +6,7 @@ namespace MSSTC4PHP\DtoCollection\Tests\Fixture;
 
 use Closure;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Selectable;
 use MSSTC4PHP\DtoCollection\Doctrine\OdmListBehaviour;
 use MSSTC4PHP\DtoCollection\ElementType;
 use MSSTC4PHP\DtoCollection\Equality\ComparatorEquality;
@@ -18,14 +19,16 @@ use NoDiscard;
  * The ODM variant over Item, unmapped: it runs the contract suites, which compare Item instances.
  *
  * @implements Collection<int, Item>
+ * @implements Selectable<int, Item>
  * @implements MutableList<Item>
  * @implements TypedList<Item>
  *
- * ODM's generated subclass has another constructor but never calls the static factories.
+ * Selectable is explicit because doctrine/collections 2's Collection does not extend it, and ODM's matching()
+ * checks it. ODM's generated subclass has another constructor but never calls the static factories.
  *
  * @phpstan-consistent-constructor
  */
-class OdmItemCollection implements Collection, MutableList, TypedList
+class OdmItemCollection implements Collection, Selectable, MutableList, TypedList
 {
     /** @use OdmListBehaviour<Item> */
     use OdmListBehaviour;

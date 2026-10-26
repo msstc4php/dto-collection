@@ -14,5 +14,10 @@
   lists (Equatable single-class branches only; no `method_exists` guessing).
 - **HashSet** (`Internal`): keyed values by key, keyless values pairwise among themselves. It
   stores the values, not only keys (object keys are `spl_object_id`, reused after GC).
-- **Callback** (`Internal`): passes the index only to callbacks that take it: user closures by
-  declared parameter count (or variadic), internal functions by REQUIRED count (`trim(...)`).
+- **Callback** (`Internal`): passes the index when the parameter at that position (or a
+  trailing variadic) is required, or optional with a type that takes an int (none, int, float,
+  mixed, or a union with one of them) — same rule for internal and user functions.
+- **SelectorKey** (`Internal`): key selectors must return int|string|BackedEnum (value used);
+  anything else → InvalidArgument (PHP would truncate floats / refuse null silently).
+- **StrictEquality float keys:** `bin2hex(pack('E', $v + 0.0))` — never var_export(), which
+  follows `serialize_precision`.

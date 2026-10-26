@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace MSSTC4PHP\DtoCollection\Behaviour;
 
+use BackedEnum;
 use Closure;
 use MSSTC4PHP\DtoCollection\Internal\HashSet;
+use MSSTC4PHP\DtoCollection\Internal\SelectorKey;
 use NoDiscard;
 
 /**
@@ -29,7 +31,7 @@ trait SetOperationsBehaviour
     /**
      * The first element for each key.
      *
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return static
      */
@@ -38,7 +40,7 @@ trait SetOperationsBehaviour
     {
         $unique = [];
         foreach ($this->elements as $element) {
-            $key = $selector($element);
+            $key = SelectorKey::of($selector($element), 'uniqueBy');
             if (!array_key_exists($key, $unique)) {
                 $unique[$key] = $element;
             }
@@ -65,7 +67,7 @@ trait SetOperationsBehaviour
     /**
      * The elements whose key is the key of no element of $others.
      *
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      * @param iterable<T> ...$others
      *
      * @return static
@@ -73,9 +75,15 @@ trait SetOperationsBehaviour
     #[NoDiscard]
     public function diffBy(Closure $selector, iterable ...$others): self
     {
-        $excluded = array_flip(array_map($selector, $this->mergedOthers($others)));
+        $excluded = array_flip($this->selectorKeys($selector, $this->mergedOthers($others), 'diffBy'));
+        $kept = [];
+        foreach ($this->elements as $element) {
+            if (!array_key_exists(SelectorKey::of($selector($element), 'diffBy'), $excluded)) {
+                $kept[] = $element;
+            }
+        }
 
-        return $this->copyWith(array_values(array_filter($this->elements, static fn (mixed $element): bool => !isset($excluded[$selector($element)]))));
+        return $this->copyWith($kept);
     }
 
     /**
@@ -100,7 +108,7 @@ trait SetOperationsBehaviour
     /**
      * The elements whose key is a key in every one of $others; a copy when none is given.
      *
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      * @param iterable<T> ...$others
      *
      * @return static
@@ -110,8 +118,14 @@ trait SetOperationsBehaviour
     {
         $elements = $this->elements;
         foreach ($others as $other) {
-            $included = array_flip(array_map($selector, $this->coerceAll($other)));
-            $elements = array_values(array_filter($elements, static fn (mixed $element): bool => isset($included[$selector($element)])));
+            $included = array_flip($this->selectorKeys($selector, $this->coerceAll($other), 'intersectBy'));
+            $kept = [];
+            foreach ($elements as $element) {
+                if (array_key_exists(SelectorKey::of($selector($element), 'intersectBy'), $included)) {
+                    $kept[] = $element;
+                }
+            }
+            $elements = $kept;
         }
 
         return $this->copyWith($elements);
@@ -175,5 +189,21 @@ trait SetOperationsBehaviour
         }
 
         return $unique;
+    }
+
+    /**
+     * @param Closure(T): (int|string|BackedEnum) $selector
+     * @param list<T> $elements
+     *
+     * @return list<array-key>
+     */
+    private function selectorKeys(Closure $selector, array $elements, string $method): array
+    {
+        $keys = [];
+        foreach ($elements as $element) {
+            $keys[] = SelectorKey::of($selector($element), $method);
+        }
+
+        return $keys;
     }
 }

@@ -90,7 +90,11 @@ trait MutableBehaviour
      */
     protected function doPush(mixed ...$elements): void
     {
-        $this->elements = [...$this->elements, ...array_values($elements)];
+        // Appended in place: rebuilding the array would make filling a list (and ODM's hydration, one add() per
+        // element) quadratic.
+        foreach ($elements as $element) {
+            $this->elements[] = $element;
+        }
     }
 
     /**

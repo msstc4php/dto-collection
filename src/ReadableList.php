@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MSSTC4PHP\DtoCollection;
 
 use ArrayAccess;
+use BackedEnum;
 use Closure;
 use Countable;
 use IteratorAggregate;
@@ -162,7 +163,7 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
     public function countWhere(Closure $predicate): int;
 
     /**
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return array<array-key, positive-int> keys in the order they are first seen
      */
@@ -302,7 +303,7 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
     /**
      * The first element for each key.
      *
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return static
      */
@@ -318,7 +319,7 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
     public function diff(iterable ...$others): self;
 
     /**
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      * @param iterable<T> ...$others
      *
      * @return static
@@ -335,7 +336,7 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
     public function intersect(iterable ...$others): self;
 
     /**
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      * @param iterable<T> ...$others
      *
      * @return static
@@ -368,7 +369,7 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
     public function split(Closure $predicate): array;
 
     /**
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return array<array-key, static> groups in the order their keys are first seen
      */
@@ -398,7 +399,7 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
     public function chunkWhile(Closure $continues): array;
 
     /**
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return array<array-key, T> the last element wins a key
      */

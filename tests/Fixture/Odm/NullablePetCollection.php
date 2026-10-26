@@ -6,6 +6,7 @@ namespace MSSTC4PHP\DtoCollection\Tests\Fixture\Odm;
 
 use Closure;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Selectable;
 use MSSTC4PHP\DtoCollection\Doctrine\OdmListBehaviour;
 use MSSTC4PHP\DtoCollection\ElementType;
 use MSSTC4PHP\DtoCollection\Equality\ComparatorEquality;
@@ -18,14 +19,16 @@ use NoDiscard;
  * The ODM variant over Pet|null, to see what ODM does with null elements.
  *
  * @implements Collection<int, Pet|null>
+ * @implements Selectable<int, Pet|null>
  * @implements MutableList<Pet|null>
  * @implements TypedList<Pet|null>
  *
- * ODM's generated subclass has another constructor but never calls the static factories.
+ * Selectable is explicit because doctrine/collections 2's Collection does not extend it, and ODM's matching()
+ * checks it. ODM's generated subclass has another constructor but never calls the static factories.
  *
  * @phpstan-consistent-constructor
  */
-class NullablePetCollection implements Collection, MutableList, TypedList
+class NullablePetCollection implements Collection, Selectable, MutableList, TypedList
 {
     /** @use OdmListBehaviour<Pet|null> */
     use OdmListBehaviour;

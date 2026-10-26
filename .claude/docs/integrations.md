@@ -19,7 +19,12 @@ Consequences, all verified with `DefaultPersistentCollectionGenerator` (AUTOGENE
    (implicit nullable, deprecated on 8.4) — `sliced()` uses `int $length = PHP_INT_MAX`.
 5. Dirty detection: `isDirty()` compares `coll->toArray()` with the snapshot, so typed mutators
    persist without calling `changed()`.
-6. ODM rejects `null` EmbedMany elements (`UnitOfWork::getParentAssociation()` TypeError at
+6. On doctrine/collections 2, `Collection` does not extend `Selectable`, but ODM's `matching()`
+   checks `$this->coll instanceof Selectable` → ODM collection classes `implements Selectable`.
+7. `PersistentCollectionTrait::initialize()`/`takeSnapshot()` call `add()` once per element →
+   `doPush` must append in place (was O(n) per call, quadratic hydration).
+8. `each()`/`pipe()` return `$this` → on the persistent wrapper that is the inner collection.
+9. ODM rejects `null` EmbedMany elements (`UnitOfWork::getParentAssociation()` TypeError at
    persist) → `TypedCollection` forbids nullable ODM collections.
 
 `DoctrineCollectionBehaviour.php` declares the trait twice inside

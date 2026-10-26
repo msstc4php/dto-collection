@@ -33,7 +33,7 @@ final class StrictEquality implements Equality
             return null;
         }
 
-        // -0.0 === 0.0 holds, but var_export() spells them differently.
-        return 'f:' . ($value === 0.0 ? '0' : var_export($value, true));
+        // The bytes, not var_export(), which follows the serialize_precision ini setting; adding 0.0 turns -0.0 into 0.0.
+        return 'f:' . bin2hex(pack('E', $value + 0.0));
     }
 }

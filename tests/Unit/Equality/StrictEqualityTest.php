@@ -46,14 +46,29 @@ final class StrictEqualityTest extends TestCase
         self::assertSame('b:1', $equality->hashKey(true));
         self::assertSame('i:5', $equality->hashKey(5));
         self::assertSame('s:5', $equality->hashKey('5'));
-        self::assertSame('f:5.0', $equality->hashKey(5.0));
-        self::assertSame('f:0', $equality->hashKey(-0.0));
-        self::assertSame('f:INF', $equality->hashKey(INF));
+        self::assertNotSame($equality->hashKey(5.0), $equality->hashKey(5));
+        self::assertNotSame($equality->hashKey(5.0), $equality->hashKey('5'));
+        self::assertNotSame($equality->hashKey(INF), $equality->hashKey(-INF));
+        self::assertStringStartsWith('f:', (string) $equality->hashKey(INF));
         self::assertNotSame($equality->hashKey(0.1), $equality->hashKey(0.1 + 1e-17 * 3));
     }
 
     public function testValuesWithoutAKeyAreComparedPairwise(): void
     {
         self::assertNull((new StrictEquality())->hashKey([1]));
+    }
+
+    public function testFloatKeysDoNotDependOnSerializePrecision(): void
+    {
+        $previous = ini_get('serialize_precision');
+        ini_set('serialize_precision', '5');
+        try {
+            $equality = new StrictEquality();
+
+            self::assertNotSame($equality->hashKey(0.1), $equality->hashKey(0.100001));
+            self::assertSame($equality->hashKey(0.0), $equality->hashKey(-0.0));
+        } finally {
+            ini_set('serialize_precision', (string) $previous);
+        }
     }
 }

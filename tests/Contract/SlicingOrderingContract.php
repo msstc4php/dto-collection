@@ -161,6 +161,7 @@ abstract class SlicingOrderingContract extends ListContractCase
             [$a1, $b1, $a2],
             $list->sortedBy(static fn (Item $item): string => $item->id)->sortedBy(static fn (Item $item): int => $item->score)->toArray(),
         );
+        self::assertSame([$a1, $b1, $a2], $list->sortedBy(static fn (Item $item): array => [$item->score, $item->id])->toArray());
     }
 
     public function testReversedShuffledKeepMembers(): void

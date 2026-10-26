@@ -6,6 +6,7 @@ namespace MSSTC4PHP\DtoCollection\Tests\Fixture\Odm;
 
 use Closure;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Selectable;
 use MSSTC4PHP\DtoCollection\Doctrine\OdmListBehaviour;
 use MSSTC4PHP\DtoCollection\ElementType;
 use MSSTC4PHP\DtoCollection\Equality\Equality;
@@ -18,14 +19,16 @@ use NoDiscard;
  * The ODM variant over the referenced document Owner, compared by identity (ODM's identity map).
  *
  * @implements Collection<int, Owner>
+ * @implements Selectable<int, Owner>
  * @implements MutableList<Owner>
  * @implements TypedList<Owner>
  *
- * ODM's generated subclass has another constructor but never calls the static factories.
+ * Selectable is explicit because doctrine/collections 2's Collection does not extend it, and ODM's matching()
+ * checks it. ODM's generated subclass has another constructor but never calls the static factories.
  *
  * @phpstan-consistent-constructor
  */
-class OwnerCollection implements Collection, MutableList, TypedList
+class OwnerCollection implements Collection, Selectable, MutableList, TypedList
 {
     /** @use OdmListBehaviour<Owner> */
     use OdmListBehaviour;

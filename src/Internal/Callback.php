@@ -6,6 +6,9 @@ namespace MSSTC4PHP\DtoCollection\Internal;
 
 use Closure;
 use ReflectionFunction;
+use ReflectionNamedType;
+use ReflectionType;
+use ReflectionUnionType;
 use WeakMap;
 
 /**
@@ -15,7 +18,7 @@ use WeakMap;
  */
 final class Callback
 {
-    /** @var WeakMap<Closure, array{int, int, bool}>|null */
+    /** @var WeakMap<Closure, array{2: bool, 3: bool}>|null */
     private static ?WeakMap $signatures = null;
 
     /**
@@ -37,31 +40,52 @@ final class Callback
     }
 
     /**
-     * Whether $callback can take $arguments positional arguments without a TypeError on the extra ones.
+     * Whether $callback takes an argument at position $arguments without a TypeError.
      *
-     * Internal functions are asked for required parameters only: passing an index into trim()'s optional
-     * $characters would fail under strict_types.
+     * A required parameter always gets it. An optional one gets it only when its type accepts an int: passing an index
+     * into trim()'s optional string $characters, or into an optional bool flag, would fail under strict_types.
      *
      * @param Closure(never, never, never): mixed $callback
-     * @param positive-int $arguments
+     * @param 2|3 $arguments
      */
     public static function takes(Closure $callback, int $arguments): bool
     {
         self::$signatures ??= new WeakMap();
-        [$parameters, $required, $userDefined] = self::$signatures[$callback] ??= self::signature($callback);
+        $takes = self::$signatures[$callback] ??= self::signature($callback);
 
-        return $userDefined ? $parameters >= $arguments : $required >= $arguments;
+        return $takes[$arguments];
     }
 
     /**
-     * @return array{int, int, bool}
+     * @return array{2: bool, 3: bool} whether the callback takes 2 and 3 arguments
      */
     private static function signature(Closure $callback): array
     {
-        $function = new ReflectionFunction($callback);
-        // A variadic closure takes any number of arguments.
-        $parameters = $function->isVariadic() && $function->isUserDefined() ? PHP_INT_MAX : $function->getNumberOfParameters();
+        $parameters = (new ReflectionFunction($callback))->getParameters();
+        $takes = [];
+        foreach ([2, 3] as $arguments) {
+            $parameter = $parameters[$arguments - 1] ?? null;
+            $last = $parameters === [] ? null : $parameters[count($parameters) - 1];
+            if ($parameter === null && $last !== null && $last->isVariadic()) {
+                $parameter = $last;
+            }
+            $takes[$arguments] = $parameter !== null && (!$parameter->isOptional() || self::acceptsInt($parameter->getType()));
+        }
 
-        return [$parameters, $function->getNumberOfRequiredParameters(), $function->isUserDefined()];
+        return $takes;
+    }
+
+    private static function acceptsInt(?ReflectionType $type): bool
+    {
+        if (!$type instanceof ReflectionType) {
+            return true;
+        }
+        foreach ($type instanceof ReflectionUnionType ? $type->getTypes() : [$type] as $member) {
+            if ($member instanceof ReflectionNamedType && in_array($member->getName(), ['int', 'float', 'mixed'], true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

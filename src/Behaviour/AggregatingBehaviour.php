@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace MSSTC4PHP\DtoCollection\Behaviour;
 
+use BackedEnum;
 use Closure;
 use MSSTC4PHP\DtoCollection\Internal\Callback;
+use MSSTC4PHP\DtoCollection\Internal\SelectorKey;
 use NoDiscard;
 
 /**
@@ -48,7 +50,7 @@ trait AggregatingBehaviour
     }
 
     /**
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return array<array-key, positive-int> keys in the order they are first seen
      */
@@ -57,7 +59,7 @@ trait AggregatingBehaviour
     {
         $counts = [];
         foreach ($this->elements as $element) {
-            $key = $selector($element);
+            $key = SelectorKey::of($selector($element), 'countBy');
             $counts[$key] = ($counts[$key] ?? 0) + 1;
         }
 

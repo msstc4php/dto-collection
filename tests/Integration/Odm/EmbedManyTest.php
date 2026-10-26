@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MSSTC4PHP\DtoCollection\Tests\Integration\Odm;
 
+use Doctrine\Common\Collections\Criteria;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Odm\Owner;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Odm\Pet;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Odm\PetCollection;
@@ -93,6 +94,15 @@ final class EmbedManyTest extends OdmTestCase
             self::assertSame(['name' => 'tom', 'age' => 5], $stored[0]);
         }
         self::assertSame(['tom'], $this->load($id)->pets()->mapToArray(static fn (Pet $pet): string => $pet->name()));
+    }
+
+    public function testMatchingOnLoadedCollection(): void
+    {
+        $owner = $this->load($this->persistedOwner());
+
+        $old = $owner->pets()->matching(Criteria::create()->where(Criteria::expr()->gt('age', 4)));
+
+        self::assertSame(['tom'], $old->mapToArray(static fn (Pet $pet): string => $pet->name()));
     }
 
     public function testClearPersists(): void

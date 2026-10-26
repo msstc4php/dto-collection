@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace MSSTC4PHP\DtoCollection\Pipe;
 
+use BackedEnum;
 use Closure;
 use MSSTC4PHP\DtoCollection\ElementType;
 use MSSTC4PHP\DtoCollection\ImmutableList;
@@ -301,7 +302,7 @@ if (!\function_exists(__NAMESPACE__ . '\\countBy')) {
     /**
      * @template T
      *
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return Closure(ReadableList<T>): array<array-key, positive-int>
      */
@@ -563,7 +564,7 @@ if (!\function_exists(__NAMESPACE__ . '\\uniqueBy')) {
     /**
      * @template T
      *
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return Closure(ReadableList<T>): ReadableList<T>
      */
@@ -593,7 +594,7 @@ if (!\function_exists(__NAMESPACE__ . '\\diffBy')) {
     /**
      * @template T
      *
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      * @param iterable<T> ...$others
      *
      * @return Closure(ReadableList<T>): ReadableList<T>
@@ -624,7 +625,7 @@ if (!\function_exists(__NAMESPACE__ . '\\intersectBy')) {
     /**
      * @template T
      *
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      * @param iterable<T> ...$others
      *
      * @return Closure(ReadableList<T>): ReadableList<T>
@@ -685,7 +686,7 @@ if (!\function_exists(__NAMESPACE__ . '\\groupBy')) {
     /**
      * @template T
      *
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return Closure(ReadableList<T>): array<array-key, ReadableList<T>>
      */
@@ -737,7 +738,7 @@ if (!\function_exists(__NAMESPACE__ . '\\keyBy')) {
     /**
      * @template T
      *
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return Closure(ReadableList<T>): array<array-key, T>
      */

@@ -58,6 +58,7 @@ abstract class SetOperationsContract extends ListContractCase
 
         self::assertSame([$b], $this->items($a, $b)->diffBy(static fn (Item $item): int => $item->score, [new Item('z', 1)])->toArray());
         self::assertSame([$a, $b], $this->items($a, $b)->diffBy(static fn (Item $item): int => $item->score)->toArray());
+        self::assertSame([], $this->items($a, $b)->diffBy(static fn (Item $item): int => $item->score, [new Item('z', 1), new Item('y', 2)])->toArray());
     }
 
     public function testIntersectAll(): void

@@ -59,6 +59,13 @@ it. PHP requires your declarations to stay compatible with that subclass.
 - **No `doAdd`, `doRemove`, `doSet` methods.** ODM's trait declares them private. The
   library's own protected methods are `doRemoveAt` and `doSetAt` for this reason.
 
+- **Implement `Selectable` explicitly.** On doctrine/collections 2, `Collection` does not
+  extend it, and ODM's `matching()` throws a `LogicException` without it.
+- **Mutate through the field, not through a returned `$this`.** On a loaded collection,
+  `each()` and `pipe()` without steps return ODM's inner collection, not the persistent
+  wrapper. Chaining a mutator onto their result (`$owner->pets()->each(...)->push($pet)`)
+  bypasses the wrapper. With `NOTIFY` change tracking, such a change is lost.
+
 `tests/Fixture/Odm/PetCollection.php` is the reference class. Without a MongoDB server,
 `tests/Unit/Doctrine/PetCollectionTest::testOdmCanGenerateItsPersistentSubclass` checks that
 ODM can generate the subclass.

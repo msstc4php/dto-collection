@@ -41,6 +41,7 @@ final class ListOfSetOperationsTest extends SetOperationsContract
 
         // Reason: the wrong element type is the input under test.
         $list = ListOf::integers([1])->diff(['1']); // @phpstan-ignore argument.type
+        self::fail('diff() accepted the wrong type: ' . count($list));
     }
 
     public function testMergeCoercesOthers(): void
@@ -50,5 +51,6 @@ final class ListOfSetOperationsTest extends SetOperationsContract
         $this->expectException(ElementTypeMismatch::class);
         // Reason: the wrong element type is the input under test.
         $list = ListOf::integers([1])->merge([1.5]); // @phpstan-ignore argument.type
+        self::fail('merge() accepted the wrong type: ' . count($list));
     }
 }

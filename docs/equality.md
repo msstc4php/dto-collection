@@ -15,7 +15,11 @@ whether two elements are the same.
 | a union `Cat\|Dog` | the rule of each branch; elements of different branches are never equal |
 
 So `ListOf::floats([NAN, NAN])->unique()` keeps both, and `ListOf::floats([NAN])->contains(NAN)`
-is `false`.
+is `false`. Float hash keys are built from the bytes of the value, so they do not depend on the
+`serialize_precision` ini setting.
+
+`Equatable` counts only for a single-class branch: in an intersection such as
+`Equatable&Countable`, the elements are compared by identity.
 
 There is no guessing: a class with an `equals()` method that does not implement `Equatable` is
 compared by identity. Someone else's `equals()` with another meaning would otherwise give

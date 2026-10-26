@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MSSTC4PHP\DtoCollection\Tests\Unit\Internal;
 
 use MSSTC4PHP\DtoCollection\Internal\Callback;
+use MSSTC4PHP\DtoCollection\Tests\Fixture\Text;
 use PHPUnit\Framework\TestCase;
 
 final class CallbackTest extends TestCase
@@ -56,5 +57,40 @@ final class CallbackTest extends TestCase
 
         self::assertSame('a0', Callback::invoke($closure, 'a', 0));
         self::assertSame('b1', Callback::invoke($closure, 'b', 1));
+    }
+
+    public function testOmitsIndexForUserCallableWithOptionalNonIntSecondParameter(): void
+    {
+        // Reason: PHPStan rightly sees the optional bool; the runtime is what is under test.
+        self::assertSame('a', Callback::invoke(Text::normalised(...), ' a ', 7)); // @phpstan-ignore argument.type
+    }
+
+    public function testOmitsIndexForTypedVariadicThatCannotTakeAnInt(): void
+    {
+        // Reason: PHPStan rightly sees the string variadic; the runtime is what is under test.
+        self::assertSame('a', Callback::invoke(Text::joined(...), 'a', 7)); // @phpstan-ignore argument.type
+    }
+
+    public function testPassesIndexToOptionalUntypedOrNumericParameters(): void
+    {
+        self::assertSame(7, Callback::invoke(static fn (string $element, $index = null): mixed => $index, 'a', 7));
+        self::assertSame(7.0, Callback::invoke(static fn (string $element, float $index = 0.0): float => $index, 'a', 7));
+        self::assertSame('7', Callback::invoke(static fn (string $element, int|string $index = 'none'): string => (string) $index, 'a', 7));
+    }
+
+    public function testPassesIndexToRequiredParameterWhateverItsType(): void
+    {
+        self::assertSame('aa', Callback::invoke(str_repeat(...), 'a', 2));
+    }
+
+    public function testARequiredParameterBeforeAVariadicGetsTheIndex(): void
+    {
+        self::assertSame(7, Callback::invoke(static fn (string $element, int $index, string ...$rest): int => $index, 'a', 7));
+    }
+
+    public function testOmitsIndexForAUnionThatCannotTakeAnInt(): void
+    {
+        // Reason: PHPStan rightly sees the optional string|bool; the runtime is what is under test.
+        self::assertSame('a', Callback::invoke(static fn (string $element, string|bool $flag = false): string => $element, 'a', 7)); // @phpstan-ignore argument.type
     }
 }

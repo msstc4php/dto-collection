@@ -12,7 +12,7 @@ In the tables, `T` is the element type as a native hint (`Item`, `int`, `?Item`,
 
 ```php
 /**
- * @implements ImmutableList<Item>      (or MutableList<Item>; the ODM variant also Collection<int, Item>)
+ * @implements ImmutableList<Item>      (or MutableList<Item>; the ODM variant also Collection<int, Item> and Selectable<int, Item>)
  * @implements TypedList<Item>
  */
 final class ItemList implements ImmutableList, TypedList   // ODM: not final
@@ -117,8 +117,9 @@ Methods that return the list declare `self`, never `static` (see odm.md for why)
 ## ODM variant
 
 - The class is not final and keeps the inherited constructor.
-- It implements `Doctrine\Common\Collections\Collection`, `MutableList` and `TypedList`, and
-  uses `Doctrine\OdmListBehaviour`.
+- It implements `Doctrine\Common\Collections\Collection`, `Selectable`, `MutableList` and
+  `TypedList`, and uses `Doctrine\OdmListBehaviour`. `Selectable` must be named explicitly: on
+  doctrine/collections 2, `Collection` does not extend it, and ODM's `matching()` checks it.
 - It **declares none of** `first`, `last`, `get`, `contains`, `add`, `set`, `remove`,
   `removeElement`, `filter`, `map`, `toArray`, `count`, `clear`, `slice`, `indexOf`,
   `exists`, `forAll`, `findFirst`, `partition`, `reduce`, `matching`, `getIterator`,

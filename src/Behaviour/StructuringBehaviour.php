@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace MSSTC4PHP\DtoCollection\Behaviour;
 
+use BackedEnum;
 use Closure;
 use MSSTC4PHP\DtoCollection\Exception\InvalidArgument;
 use MSSTC4PHP\DtoCollection\Internal\Callback;
+use MSSTC4PHP\DtoCollection\Internal\SelectorKey;
 use NoDiscard;
 
 /**
@@ -38,7 +40,7 @@ trait StructuringBehaviour
     }
 
     /**
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return array<array-key, static> groups in the order their keys are first seen
      */
@@ -47,7 +49,7 @@ trait StructuringBehaviour
     {
         $groups = [];
         foreach ($this->elements as $element) {
-            $groups[$selector($element)][] = $element;
+            $groups[SelectorKey::of($selector($element), 'groupBy')][] = $element;
         }
 
         return array_map(fn (array $group): self => $this->copyWith($group), $groups);
@@ -118,7 +120,7 @@ trait StructuringBehaviour
     }
 
     /**
-     * @param Closure(T): array-key $selector
+     * @param Closure(T): (int|string|BackedEnum) $selector
      *
      * @return array<array-key, T> the last element wins a key
      */
@@ -127,7 +129,7 @@ trait StructuringBehaviour
     {
         $keyed = [];
         foreach ($this->elements as $element) {
-            $keyed[$selector($element)] = $element;
+            $keyed[SelectorKey::of($selector($element), 'keyBy')] = $element;
         }
 
         return $keyed;
