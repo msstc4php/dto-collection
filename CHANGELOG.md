@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here. Dates are UTC.
 
-## 1.0.0 - unreleased
+## 1.0.0 - 2026-10-26
 
 First release, for PHP 8.1–8.4.
 
