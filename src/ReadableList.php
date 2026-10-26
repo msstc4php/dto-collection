@@ -295,4 +295,72 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
      * @return static
      */
     public function shuffled(): self;
+
+    /**
+     * The first of each group of equal elements.
+     *
+     * @return static
+     */
+    public function unique(): self;
+
+    /**
+     * The first element for each key.
+     *
+     * @param Closure(T): array-key $selector
+     *
+     * @return static
+     */
+    public function uniqueBy(Closure $selector): self;
+
+    /**
+     * The elements contained in none of $others; duplicates in this list are kept.
+     *
+     * @param iterable<T> ...$others
+     *
+     * @return static
+     */
+    public function diff(iterable ...$others): self;
+
+    /**
+     * @param Closure(T): array-key $selector
+     * @param iterable<T> ...$others
+     *
+     * @return static
+     */
+    public function diffBy(Closure $selector, iterable ...$others): self;
+
+    /**
+     * The elements contained in every one of $others; a copy when none is given.
+     *
+     * @param iterable<T> ...$others
+     *
+     * @return static
+     */
+    public function intersect(iterable ...$others): self;
+
+    /**
+     * @param Closure(T): array-key $selector
+     * @param iterable<T> ...$others
+     *
+     * @return static
+     */
+    public function intersectBy(Closure $selector, iterable ...$others): self;
+
+    /**
+     * The first of each group of equal elements of this list followed by $others.
+     *
+     * @param iterable<T> ...$others
+     *
+     * @return static
+     */
+    public function union(iterable ...$others): self;
+
+    /**
+     * This list followed by $others, duplicates included.
+     *
+     * @param iterable<T> ...$others
+     *
+     * @return static
+     */
+    public function merge(iterable ...$others): self;
 }

@@ -11,6 +11,7 @@ use MSSTC4PHP\DtoCollection\Behaviour\NumericBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\OrderingBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\ReadingBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\SearchingBehaviour;
+use MSSTC4PHP\DtoCollection\Behaviour\SetOperationsBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\SlicingBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\TextBehaviour;
 use MSSTC4PHP\DtoCollection\Equality\Equality;
@@ -43,6 +44,9 @@ final class ListOf implements ReadableList
 
     /** @use OrderingBehaviour<T> */
     use OrderingBehaviour;
+
+    /** @use SetOperationsBehaviour<T> */
+    use SetOperationsBehaviour;
 
     use NumericBehaviour;
     use TextBehaviour;
