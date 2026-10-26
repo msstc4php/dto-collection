@@ -1,0 +1,20 @@
+deptrac:
+  paths:
+    - ./src
+  layers:
+    - name: Core
+      collectors:
+        - type: classNameRegex
+          value: '#^MSSTC4PHP\\DtoCollection\\(?!Doctrine\\)#'
+    - name: Bridge
+      collectors:
+        - type: classNameRegex
+          value: '#^MSSTC4PHP\\DtoCollection\\Doctrine\\#'
+    - name: DoctrineVendor
+      collectors:
+        - type: classNameRegex
+          value: '#^Doctrine\\#'
+  ruleset:
+    Core: ~
+    Bridge: [Core, DoctrineVendor]
+    DoctrineVendor: ~
