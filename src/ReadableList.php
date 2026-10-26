@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MSSTC4PHP\DtoCollection;
 
 use ArrayAccess;
-use ArrayIterator;
 use Closure;
 use Countable;
 use IteratorAggregate;
@@ -13,6 +12,10 @@ use JsonSerializable;
 
 /**
  * A list with keys 0..n-1. Methods whose signature names the element type are typed by each concrete class.
+ *
+ * Methods that Doctrine's Collection also declares have no native return type here: the ODM variant must stay
+ * compatible with the persistent subclass Doctrine ODM generates, which redeclares them (see docs/odm.md).
+ * Iteration runs over a snapshot: changes made during a loop are not seen by it.
  *
  * @template T the element type
  *
@@ -22,30 +25,21 @@ use JsonSerializable;
 interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, ArrayAccess
 {
     /**
-     * @return non-negative-int
+     * @return bool
      */
-    public function count(): int;
-
-    public function isEmpty(): bool;
+    public function isEmpty();
 
     public function isNotEmpty(): bool;
 
     /**
      * @return list<T>
      */
-    public function toArray(): array;
+    public function toArray();
 
     /**
      * @return list<T>
      */
     public function jsonSerialize(): array;
-
-    /**
-     * Iterates a snapshot: changes made during the loop are not seen by it.
-     *
-     * @return ArrayIterator<int, T>
-     */
-    public function getIterator(): ArrayIterator;
 
     /**
      * Same length and pairwise equal elements under this list's equality.
@@ -57,12 +51,12 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
     /**
      * @return T|null
      */
-    public function first(): mixed;
+    public function first();
 
     /**
      * @return T|null
      */
-    public function last(): mixed;
+    public function last();
 
     /**
      * @return T
@@ -81,7 +75,7 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
     /**
      * @return T|null
      */
-    public function get(int $index): mixed;
+    public function get(int $index);
 
     /**
      * @return T
@@ -158,7 +152,7 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
      *
      * @return R
      */
-    public function reduce(Closure $reducer, mixed $initial = null): mixed;
+    public function reduce(Closure $reducer, mixed $initial = null);
 
     /**
      * @param Closure(T, int): bool $predicate
@@ -203,7 +197,7 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
      *
      * @return static
      */
-    public function filter(Closure $predicate): self;
+    public function filter(Closure $predicate);
 
     /**
      * @param Closure(T, int): bool $predicate

@@ -191,7 +191,7 @@ final class MutableItemList implements MutableList, TypedList
 
     public function set(int $index, Item $element): void
     {
-        $this->doSet($index, $element);
+        $this->doSetAt($index, $element);
     }
 
     public function insertAt(int $index, Item $element): void
@@ -206,7 +206,7 @@ final class MutableItemList implements MutableList, TypedList
 
     public function remove(int $index): ?Item
     {
-        return $this->doRemove($index);
+        return $this->doRemoveAt($index);
     }
 
     public function pop(): ?Item

@@ -9,6 +9,8 @@ use MSSTC4PHP\DtoCollection\MutableListOf;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\IntegerList;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\ItemList;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\MutableItemList;
+use MSSTC4PHP\DtoCollection\Tests\Fixture\Odm\PetCollection;
+use MSSTC4PHP\DtoCollection\Tests\Fixture\OdmItemCollection;
 use NoDiscard;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -18,15 +20,18 @@ use ReflectionNamedType;
 
 final class PublicApiTest extends TestCase
 {
-    /** A result that may be ignored: each() returns the list itself, the removals report what they removed. */
-    private const MAY_DISCARD = ['each', 'remove', 'removeElement', 'removeIf', 'pop', 'shift'];
+    /**
+     * Results that may be ignored: each() returns the list itself, the removals report what they removed, next()
+     * moves Doctrine's pointer; add/set/offsetSet/offsetUnset have no native void on doctrine/collections 2.
+     */
+    private const MAY_DISCARD = ['each', 'remove', 'removeElement', 'removeIf', 'pop', 'shift', 'next', 'add', 'set', 'offsetSet', 'offsetUnset'];
 
     /**
      * @return iterable<string, array{class-string}>
      */
     public static function classes(): iterable
     {
-        foreach ([ListOf::class, MutableListOf::class, ItemList::class, IntegerList::class, MutableItemList::class] as $class) {
+        foreach ([ListOf::class, MutableListOf::class, ItemList::class, IntegerList::class, MutableItemList::class, PetCollection::class, OdmItemCollection::class] as $class) {
             yield $class => [$class];
         }
     }

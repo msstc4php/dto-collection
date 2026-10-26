@@ -29,6 +29,8 @@ return RectorConfig::configure()
     )
     ->withImportNames(removeUnusedImports: true)
     ->withSkip([
+        // Its signatures must match what Doctrine ODM's generated subclass declares, per doctrine/collections major.
+        __DIR__ . '/src/Doctrine/DoctrineCollectionBehaviour.php',
         NewlineAfterStatementRector::class,
         CatchExceptionNameMatchingTypeRector::class,
         // `@return static` over a native `self` is how queries keep the concrete class for PHPStan; native static breaks ODM proxies.

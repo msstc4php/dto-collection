@@ -26,14 +26,7 @@ trait AggregatingBehaviour
     #[NoDiscard]
     public function reduce(Closure $reducer, mixed $initial = null): mixed
     {
-        $withIndex = Callback::takes($reducer, 3);
-        $carry = $initial;
-        foreach ($this->elements as $index => $element) {
-            // Reason: a reducer that does not declare the index gets two arguments, as Doctrine's reduce() passes.
-            $carry = $withIndex ? $reducer($carry, $element, $index) : $reducer($carry, $element); // @phpstan-ignore arguments.count
-        }
-
-        return $carry;
+        return $this->reduced($reducer, $initial);
     }
 
     /**
@@ -135,5 +128,25 @@ trait AggregatingBehaviour
         }
 
         return $best;
+    }
+
+    /**
+     * @template R
+     *
+     * @param Closure(R, T, int): R $reducer
+     * @param R $initial
+     *
+     * @return R
+     */
+    private function reduced(Closure $reducer, mixed $initial): mixed
+    {
+        $withIndex = Callback::takes($reducer, 3);
+        $carry = $initial;
+        foreach ($this->elements as $index => $element) {
+            // Reason: a reducer that does not declare the index gets two arguments, as Doctrine's reduce() passes.
+            $carry = $withIndex ? $reducer($carry, $element, $index) : $reducer($carry, $element); // @phpstan-ignore arguments.count
+        }
+
+        return $carry;
     }
 }

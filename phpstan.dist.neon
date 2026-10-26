@@ -12,6 +12,31 @@ parameters:
     paths:
         - src/
         - tests/
+    # The ODM shells are declared inside `if` (doctrine/collections 2 vs 3), where PHPStan does not read inline ignores.
+    ignoreErrors:
+        -
+            # first()/last() return null for an empty list in every variant (spec 7.7); Doctrine's PHPDoc says false.
+            identifier: method.childReturnType
+            message: '#::(first|last)\(\) should be covariant with return type \(.+\|false\) of method Doctrine\\Common\\Collections\\ReadableCollection#'
+            path: src/Doctrine/DoctrineCollectionBehaviour.php
+        -
+            # The native type must stay as wide as ODM's generated subclass declares it; only int keys are returned.
+            identifier: method.childReturnType
+            message: '#::(key|indexOf)\(\) should be covariant with return type#'
+            path: src/Doctrine/DoctrineCollectionBehaviour.php
+            # doctrine/collections 3's PHPDoc agrees with the native type: the error exists on 2 only.
+            reportUnmatched: false
+        -
+            # Doctrine's PHPDoc has no index parameter; ours passes it only to a reducer that declares a third one.
+            identifier: method.childParameterType
+            message: '#::reduce\(\) should be contravariant with parameter \$func#'
+            path: src/Doctrine/DoctrineCollectionBehaviour.php
+        -
+            # PHPStan reads the doctrine/collections 3 branch even when 2 is installed; there Collection is not Selectable.
+            identifiers: [return.type, return.phpDocType, missingType.generics]
+            message: '#::matching\(\)|is not subtype of native type Doctrine\\Common\\Collections\\ReadableCollection&Doctrine\\Common\\Collections\\Selectable#'
+            path: src/Doctrine/DoctrineCollectionBehaviour.php
+            reportUnmatched: false
     disallowedFunctionCalls:
         -
             function:

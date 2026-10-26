@@ -3,6 +3,8 @@
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__ . '/src')
     ->in(__DIR__ . '/tests')
+    // Its signatures must match what Doctrine ODM's generated subclass declares; void_return would break doctrine/collections 2.
+    ->notPath('Doctrine/DoctrineCollectionBehaviour.php')
     ->append([__FILE__, __DIR__ . '/rector.php'])
 ;
 

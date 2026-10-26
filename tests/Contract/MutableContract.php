@@ -8,9 +8,10 @@ use MSSTC4PHP\DtoCollection\Exception\IndexOutOfRange;
 use MSSTC4PHP\DtoCollection\MutableListOf;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Item;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\MutableItemList;
+use MSSTC4PHP\DtoCollection\Tests\Fixture\OdmItemCollection;
 
 /**
- * @phpstan-type MutableItemsUnderTest MutableListOf<Item>|MutableItemList
+ * @phpstan-type MutableItemsUnderTest MutableListOf<Item>|MutableItemList|OdmItemCollection
  */
 abstract class MutableContract extends ListContractCase
 {

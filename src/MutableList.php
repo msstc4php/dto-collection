@@ -53,9 +53,11 @@ interface MutableList extends ReadableList
     public function removeIf(Closure $predicate): int;
 
     /**
+     * No native return type: Doctrine's Collection declares remove() as well (see ReadableList).
+     *
      * @return T|null the removed element, null when $index is out of range
      */
-    public function remove(int $index): mixed;
+    public function remove(int $index);
 
     /**
      * @return T|null the removed last element, null on an empty list

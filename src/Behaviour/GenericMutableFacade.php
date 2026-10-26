@@ -23,7 +23,7 @@ trait GenericMutableFacade
 
     public function set(int $index, mixed $element): void
     {
-        $this->doSet($index, $this->elementType()->coerce($element, $index));
+        $this->doSetAt($index, $this->elementType()->coerce($element, $index));
     }
 
     public function insertAt(int $index, mixed $element): void
@@ -41,7 +41,7 @@ trait GenericMutableFacade
      */
     public function remove(int $index): mixed
     {
-        return $this->doRemove($index);
+        return $this->doRemoveAt($index);
     }
 
     /**

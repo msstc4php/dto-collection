@@ -108,7 +108,7 @@ trait MutableBehaviour
      *
      * @throws IndexOutOfRange
      */
-    protected function doSet(int $index, mixed $element): void
+    protected function doSetAt(int $index, mixed $element): void
     {
         $this->assertIndexUpToCount($index);
         array_splice($this->elements, $index, 1, [$element]);
@@ -128,7 +128,7 @@ trait MutableBehaviour
     /**
      * @return T|null null when $index is out of range
      */
-    protected function doRemove(int $index): mixed
+    protected function doRemoveAt(int $index): mixed
     {
         if (!array_key_exists($index, $this->elements)) {
             return null;
