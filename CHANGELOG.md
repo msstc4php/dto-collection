@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here. Dates are UTC.
 
+## 1.1.0 - 2026-10-26
+
+### Added
+
+- `ElementType::andInstanceOf()`: `ElementType::ofClass(A::class)->andInstanceOf(B::class)`
+  accepts the same elements as `ElementType::intersection(A::class, B::class)`, and PHPStan
+  types it as `ElementType<A&B>` instead of `ElementType<object>`. Generated collections of
+  an intersection no longer need a `@phpstan-ignore`.
+
 ## 1.0.0 - 2026-10-26
 
 First release, for PHP 8.1–8.4.

@@ -129,6 +129,26 @@ final class ElementType
     }
 
     /**
+     * Unlike intersection(), PHPStan reads the result exactly: ofClass(A::class)->andInstanceOf(B::class) is self<A&B>.
+     *
+     * @template C of object
+     *
+     * @param class-string<C> $class
+     *
+     * @return self<T&C>
+     */
+    public function andInstanceOf(string $class): self
+    {
+        $branch = $this->branches[0];
+        if ($this->nullable || count($this->branches) !== 1 || !is_array($branch)) {
+            throw new InvalidElementType(sprintf('Only a class or an intersection can be intersected with %s, not %s', self::className($class), $this->describe()));
+        }
+
+        // intersection() validates the classes; its result is typed self<object>, hence the copy of its branches.
+        return new self(self::intersection(...[...$branch, $class])->branches, false);
+    }
+
+    /**
      * @return self<T|null>
      */
     public function nullable(): self
