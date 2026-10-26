@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace MSSTC4PHP\DtoCollection\Tests\Fixture;
 
-final class Item
+use MSSTC4PHP\DtoCollection\Equatable;
+
+final class Item implements Equatable
 {
     public function __construct(
         public readonly string $id,

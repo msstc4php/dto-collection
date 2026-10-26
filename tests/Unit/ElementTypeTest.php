@@ -146,7 +146,8 @@ final class ElementTypeTest extends TestCase
 
     public function testOfClassNormalisesTheName(): void
     {
-        self::assertSame(Item::class, ElementType::ofClass('\\' . strtolower(Item::class))->describe());
+        // Built-in, so the lower-case lookup does not depend on whether an autoloader already ran.
+        self::assertSame('Countable', ElementType::ofClass('\\countable')->describe());
     }
 
     public function testIsNumericAndIsString(): void
