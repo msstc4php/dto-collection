@@ -4,17 +4,10 @@ declare(strict_types=1);
 
 namespace MSSTC4PHP\DtoCollection;
 
-use MSSTC4PHP\DtoCollection\Behaviour\AggregatingBehaviour;
+use MSSTC4PHP\DtoCollection\Behaviour\GenericImmutableFacade;
 use MSSTC4PHP\DtoCollection\Behaviour\GenericReadingFacade;
-use MSSTC4PHP\DtoCollection\Behaviour\ListStorage;
-use MSSTC4PHP\DtoCollection\Behaviour\MappingBehaviour;
+use MSSTC4PHP\DtoCollection\Behaviour\ImmutableListBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\NumericBehaviour;
-use MSSTC4PHP\DtoCollection\Behaviour\OrderingBehaviour;
-use MSSTC4PHP\DtoCollection\Behaviour\ReadingBehaviour;
-use MSSTC4PHP\DtoCollection\Behaviour\SearchingBehaviour;
-use MSSTC4PHP\DtoCollection\Behaviour\SetOperationsBehaviour;
-use MSSTC4PHP\DtoCollection\Behaviour\SlicingBehaviour;
-use MSSTC4PHP\DtoCollection\Behaviour\StructuringBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\TextBehaviour;
 use MSSTC4PHP\DtoCollection\Equality\Equality;
 use MSSTC4PHP\DtoCollection\Equality\EqualityResolver;
@@ -25,42 +18,21 @@ use NoDiscard;
  *
  * @template T
  *
- * @implements ReadableList<T>
+ * @implements ImmutableList<T>
  */
-final class ListOf implements ReadableList
+final class ListOf implements ImmutableList
 {
-    /** @use ListStorage<T> */
-    use ListStorage;
-
-    /** @use ReadingBehaviour<T> */
-    use ReadingBehaviour;
-
-    /** @use SearchingBehaviour<T> */
-    use SearchingBehaviour;
-
-    /** @use AggregatingBehaviour<T> */
-    use AggregatingBehaviour;
-
-    /** @use SlicingBehaviour<T> */
-    use SlicingBehaviour;
-
-    /** @use OrderingBehaviour<T> */
-    use OrderingBehaviour;
-
-    /** @use SetOperationsBehaviour<T> */
-    use SetOperationsBehaviour;
-
-    /** @use StructuringBehaviour<T> */
-    use StructuringBehaviour;
-
-    /** @use MappingBehaviour<T> */
-    use MappingBehaviour;
+    /** @use ImmutableListBehaviour<T> */
+    use ImmutableListBehaviour;
 
     use NumericBehaviour;
     use TextBehaviour;
 
     /** @use GenericReadingFacade<T> */
     use GenericReadingFacade;
+
+    /** @use GenericImmutableFacade<T> */
+    use GenericImmutableFacade;
 
     /**
      * @param ElementType<T> $type
