@@ -462,4 +462,18 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
      * The steps stay untyped: each takes the previous step's result, which PHPDoc cannot chain over a variadic.
      */
     public function pipe(Closure ...$steps): mixed;
+
+    /**
+     * A mutable copy with the same element type and equality.
+     *
+     * @return MutableListOf<T>
+     */
+    public function toMutable(): MutableListOf;
+
+    /**
+     * An immutable copy with the same element type and equality.
+     *
+     * @return ListOf<T>
+     */
+    public function toImmutable(): ListOf;
 }

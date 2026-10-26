@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace MSSTC4PHP\DtoCollection\Tests\Contract;
 
 use MSSTC4PHP\DtoCollection\Exception\IndexOutOfRange;
+use MSSTC4PHP\DtoCollection\ListOf;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Item;
+use MSSTC4PHP\DtoCollection\Tests\Fixture\ItemList;
 
+/**
+ * @phpstan-type ImmutableItemsUnderTest ListOf<Item>|ItemList
+ */
 abstract class ImmutableContract extends ListContractCase
 {
     private Item $a;
@@ -21,6 +26,11 @@ abstract class ImmutableContract extends ListContractCase
         $this->b = new Item('b', 2);
         $this->c = new Item('c', 3);
     }
+
+    /**
+     * @return ImmutableItemsUnderTest
+     */
+    abstract protected function items(Item ...$items): object;
 
     public function testWithAppendsAndLeavesOriginal(): void
     {

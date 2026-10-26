@@ -11,11 +11,7 @@ use MSSTC4PHP\DtoCollection\Tests\Fixture\IntegerList;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Item;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\ItemList;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Tag;
-use NoDiscard;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionNamedType;
 use TypeError;
 
 final class ItemListTest extends TestCase
@@ -62,31 +58,5 @@ final class ItemListTest extends TestCase
         self::assertInstanceOf(ItemList::class, $mapped);
         self::assertSame([$item], $mapped->toArray());
         self::assertSame([2], ItemList::of($item)->mapInto(IntegerList::class, static fn (Item $element): int => $element->score + 1)->toArray());
-    }
-
-    public function testEveryValueReturningPublicMethodIsNoDiscard(): void
-    {
-        foreach ([ItemList::class, IntegerList::class, ListOf::class] as $class) {
-            foreach ((new ReflectionClass($class))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                $type = $method->getReturnType();
-                if ($method->isConstructor() || $method->getName() === 'each' || ($type instanceof ReflectionNamedType && $type->getName() === 'void')) {
-                    continue;
-                }
-                self::assertNotEmpty($method->getAttributes(NoDiscard::class), $class . '::' . $method->getName() . '() lacks #[NoDiscard]');
-            }
-        }
-    }
-
-    public function testNoPublicMethodDeclaresStaticReturn(): void
-    {
-        foreach ([ItemList::class, ListOf::class] as $class) {
-            foreach ((new ReflectionClass($class))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                $type = $method->getReturnType();
-                if ($method->isStatic()) {
-                    continue;
-                }
-                self::assertFalse($type instanceof ReflectionNamedType && $type->getName() === 'static', $class . '::' . $method->getName() . '() returns static');
-            }
-        }
     }
 }

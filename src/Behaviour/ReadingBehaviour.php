@@ -6,6 +6,8 @@ namespace MSSTC4PHP\DtoCollection\Behaviour;
 
 use ArrayIterator;
 use MSSTC4PHP\DtoCollection\Exception\ReadOnlyCollection;
+use MSSTC4PHP\DtoCollection\ListOf;
+use MSSTC4PHP\DtoCollection\MutableListOf;
 use MSSTC4PHP\DtoCollection\ReadableList;
 use NoDiscard;
 
@@ -105,6 +107,28 @@ trait ReadingBehaviour
         }
 
         return true;
+    }
+
+    /**
+     * A mutable copy with the same element type and equality.
+     *
+     * @return MutableListOf<T>
+     */
+    #[NoDiscard]
+    public function toMutable(): MutableListOf
+    {
+        return MutableListOf::ofType($this->elementType(), $this->elements, $this->equality());
+    }
+
+    /**
+     * An immutable copy with the same element type and equality.
+     *
+     * @return ListOf<T>
+     */
+    #[NoDiscard]
+    public function toImmutable(): ListOf
+    {
+        return ListOf::ofType($this->elementType(), $this->elements, $this->equality());
     }
 
     /**
