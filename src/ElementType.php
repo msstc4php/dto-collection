@@ -253,7 +253,8 @@ final class ElementType
      */
     private function sortedBranches(): array
     {
-        $described = array_map(self::describeBranch(...), $this->branches);
+        // An intersection is the same type in any order of its classes.
+        $described = array_map(static fn (string|array $branch): string => is_string($branch) ? $branch : self::describeSortedClasses($branch), $this->branches);
         sort($described);
 
         return $described;
@@ -274,6 +275,18 @@ final class ElementType
     }
 
     /**
+     * @param non-empty-list<class-string> $classes
+     *
+     * @return non-empty-string
+     */
+    private static function describeSortedClasses(array $classes): string
+    {
+        sort($classes);
+
+        return implode('&', $classes);
+    }
+
+    /**
      * @param ScalarBranch|non-empty-list<class-string> $branch
      *
      * @return non-empty-string
@@ -288,11 +301,10 @@ final class ElementType
      */
     private static function className(string $class): string
     {
-        $name = ltrim($class, '\\');
-        if (!class_exists($name) && !interface_exists($name)) {
-            throw new InvalidElementType(sprintf('Class or interface "%s" does not exist', $name));
+        if (!class_exists($class) && !interface_exists($class)) {
+            throw new InvalidElementType(sprintf('Class or interface "%s" does not exist', ltrim($class, '\\')));
         }
 
-        return (new ReflectionClass($name))->getName();
+        return (new ReflectionClass($class))->getName();
     }
 }

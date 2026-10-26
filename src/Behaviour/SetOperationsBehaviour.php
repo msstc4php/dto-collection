@@ -36,17 +36,15 @@ trait SetOperationsBehaviour
     #[NoDiscard]
     public function uniqueBy(Closure $selector): self
     {
-        $seen = [];
         $unique = [];
         foreach ($this->elements as $element) {
             $key = $selector($element);
-            if (!isset($seen[$key])) {
-                $seen[$key] = true;
-                $unique[] = $element;
+            if (!array_key_exists($key, $unique)) {
+                $unique[$key] = $element;
             }
         }
 
-        return $this->copyWith($unique);
+        return $this->copyWith(array_values($unique));
     }
 
     /**

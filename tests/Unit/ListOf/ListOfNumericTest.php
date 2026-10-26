@@ -80,4 +80,9 @@ final class ListOfNumericTest extends TestCase
 
         $joined = ListOf::integers([1])->join();
     }
+
+    public function testReduceWithInternalTwoParameterFunction(): void
+    {
+        self::assertSame(2.0, ListOf::floats([2.0, 4.0])->reduce(fdiv(...), 16.0));
+    }
 }

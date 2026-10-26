@@ -6,6 +6,8 @@ namespace MSSTC4PHP\DtoCollection\Tests\Unit\Mutable;
 
 use MSSTC4PHP\DtoCollection\Exception\ElementTypeMismatch;
 use MSSTC4PHP\DtoCollection\MutableListOf;
+use MSSTC4PHP\DtoCollection\Tests\Fixture\Item;
+use MSSTC4PHP\DtoCollection\Tests\Fixture\MutableItemList;
 use PHPUnit\Framework\TestCase;
 
 final class MutableListOfTest extends TestCase
@@ -68,5 +70,22 @@ final class MutableListOfTest extends TestCase
         self::assertSame(3, $list->pop());
         self::assertSame(1, $list->shift());
         self::assertNull($list->shift());
+    }
+
+    public function testRemoveElementReportsPositionZero(): void
+    {
+        $this->expectExceptionMessage('Element #0 must be int, string given');
+
+        MutableListOf::integers([1])->removeElement('x');
+    }
+
+    public function testNamedVariadicArgumentsStayAList(): void
+    {
+        $list = new MutableItemList([new Item('a', 1)]);
+        $list->push(...['extra' => new Item('b', 2)]);
+        $list->unshift(...['first' => new Item('z', 0)]);
+
+        self::assertSame([0, 1, 2], array_keys($list->toArray()));
+        self::assertSame(['z', 'a', 'b'], $list->mapToArray(static fn (Item $item): string => $item->id));
     }
 }

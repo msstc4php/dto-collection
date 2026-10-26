@@ -41,6 +41,8 @@ abstract class ImmutableContract extends ListContractCase
         self::assertSame([$this->a, $this->b, $this->c], $more->toArray());
         self::assertSame($list::class, $more::class);
         self::assertSame([$this->a], $list->with()->toArray());
+        self::assertSame([$this->a, $this->b, $this->c], $this->items($this->a, $this->b)->with($this->c)->toArray());
+        self::assertSame([$this->c, $this->a, $this->b], $this->items($this->a, $this->b)->withPrepended($this->c)->toArray());
     }
 
     public function testWithPrepended(): void
@@ -54,6 +56,7 @@ abstract class ImmutableContract extends ListContractCase
 
         self::assertSame([$this->b], $list->withSet(0, $this->b)->toArray());
         self::assertSame([$this->a, $this->b], $list->withSet(1, $this->b)->toArray());
+        self::assertSame([$this->c, $this->b], $this->items($this->a, $this->b)->withSet(0, $this->c)->toArray());
         self::assertSame([$this->a], $list->toArray());
     }
 

@@ -13,14 +13,16 @@ use MSSTC4PHP\DtoCollection\Equality\Equality;
  */
 final class HashSet
 {
-    /** @var array<string, true> */
+    /**
+     * Holds the values, not just their keys: an object's key is its spl_object_id(), which PHP reuses once the
+     * object is gone.
+     *
+     * @var array<string, mixed>
+     */
     private array $hashed = [];
 
     /** @var list<mixed> */
     private array $unhashed = [];
-
-    /** @var list<mixed> */
-    private array $all = [];
 
     /**
      * @param iterable<mixed> $values
@@ -38,19 +40,18 @@ final class HashSet
         if ($key === null) {
             $this->unhashed[] = $value;
         } else {
-            $this->hashed[$key] = true;
+            $this->hashed[$key] = $value;
         }
-        $this->all[] = $value;
     }
 
     public function contains(mixed $value): bool
     {
         $key = $this->equality->hashKey($value);
-        if ($key !== null && isset($this->hashed[$key])) {
-            return true;
+        if ($key !== null) {
+            return array_key_exists($key, $this->hashed);
         }
 
-        foreach ($key === null ? $this->all : $this->unhashed as $member) {
+        foreach ($this->unhashed as $member) {
             if ($this->equality->equals($member, $value)) {
                 return true;
             }

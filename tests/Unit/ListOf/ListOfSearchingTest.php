@@ -39,4 +39,21 @@ final class ListOfSearchingTest extends SearchingContract
         self::assertSame(0, ListOf::floats([1.0])->positionOf(1));
         self::assertTrue(ListOf::floats([1.0])->contains(1));
     }
+
+    public function testSingleArgumentChecksReportPositionZero(): void
+    {
+        $list = ListOf::integers([1]);
+        $calls = [
+            static fn (): bool => $list->contains('x'),
+            static fn (): ?int => $list->positionOf('x'),
+        ];
+        foreach ($calls as $call) {
+            try {
+                $call();
+                self::fail('a string was accepted');
+            } catch (ElementTypeMismatch $exception) {
+                self::assertSame('Element #0 must be int, string given', $exception->getMessage());
+            }
+        }
+    }
 }

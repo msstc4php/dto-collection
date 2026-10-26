@@ -71,4 +71,9 @@ final class TypedCollectionTest extends TestCase
 
         new TypedCollection('  ', Variant::Mutable);
     }
+
+    public function testAcceptsOdmCollectionsWithoutElementType(): void
+    {
+        self::assertNull((new TypedCollection('App\\Document\\Things', Variant::Odm))->elementType);
+    }
 }

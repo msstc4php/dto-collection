@@ -22,17 +22,17 @@ trait DoctrineCollectionOperations
     /** Doctrine's internal pointer for key(), current() and next(). */
     private int $position = 0;
 
-    protected function doctrineAdd(mixed $element): void
+    private function doctrineAdd(mixed $element): void
     {
         $this->doPush($this->elementType()->coerce($element, count($this->elements)));
     }
 
-    protected function doctrineContains(mixed $element): bool
+    private function doctrineContains(mixed $element): bool
     {
         return $this->doContains($this->elementType()->coerce($element, 0));
     }
 
-    protected function doctrineContainsKey(string|int $key): bool
+    private function doctrineContainsKey(string|int $key): bool
     {
         return is_int($key) && array_key_exists($key, $this->elements);
     }
@@ -40,7 +40,7 @@ trait DoctrineCollectionOperations
     /**
      * @return T|null
      */
-    protected function doctrineGet(string|int $key): mixed
+    private function doctrineGet(string|int $key): mixed
     {
         return is_int($key) ? $this->doGet($key) : null;
     }
@@ -48,7 +48,7 @@ trait DoctrineCollectionOperations
     /**
      * @return list<int>
      */
-    protected function doctrineKeys(): array
+    private function doctrineKeys(): array
     {
         return array_keys($this->elements);
     }
@@ -56,7 +56,7 @@ trait DoctrineCollectionOperations
     /**
      * @return T|null
      */
-    protected function doctrineFirst(): mixed
+    private function doctrineFirst(): mixed
     {
         $this->position = 0;
 
@@ -66,14 +66,14 @@ trait DoctrineCollectionOperations
     /**
      * @return T|null
      */
-    protected function doctrineLast(): mixed
+    private function doctrineLast(): mixed
     {
         $this->position = max(0, count($this->elements) - 1);
 
         return $this->doLast();
     }
 
-    protected function doctrineKey(): ?int
+    private function doctrineKey(): ?int
     {
         return array_key_exists($this->position, $this->elements) ? $this->position : null;
     }
@@ -81,7 +81,7 @@ trait DoctrineCollectionOperations
     /**
      * @return T|false
      */
-    protected function doctrineCurrent(): mixed
+    private function doctrineCurrent(): mixed
     {
         return array_key_exists($this->position, $this->elements) ? $this->elements[$this->position] : false;
     }
@@ -89,7 +89,7 @@ trait DoctrineCollectionOperations
     /**
      * @return T|false
      */
-    protected function doctrineNext(): mixed
+    private function doctrineNext(): mixed
     {
         $this->position++;
 
@@ -99,7 +99,7 @@ trait DoctrineCollectionOperations
     /**
      * @return list<T>
      */
-    protected function doctrineSlice(int $offset, ?int $length): array
+    private function doctrineSlice(int $offset, ?int $length): array
     {
         return array_slice($this->elements, $offset, $length);
     }
@@ -107,7 +107,7 @@ trait DoctrineCollectionOperations
     /**
      * @param Closure(int, T): bool $predicate
      */
-    protected function doctrineExists(Closure $predicate): bool
+    private function doctrineExists(Closure $predicate): bool
     {
         foreach ($this->elements as $key => $element) {
             if ($predicate($key, $element)) {
@@ -121,7 +121,7 @@ trait DoctrineCollectionOperations
     /**
      * @param Closure(int, T): bool $predicate
      */
-    protected function doctrineForAll(Closure $predicate): bool
+    private function doctrineForAll(Closure $predicate): bool
     {
         foreach ($this->elements as $key => $element) {
             if (!$predicate($key, $element)) {
@@ -137,7 +137,7 @@ trait DoctrineCollectionOperations
      *
      * @return T|null
      */
-    protected function doctrineFindFirst(Closure $predicate): mixed
+    private function doctrineFindFirst(Closure $predicate): mixed
     {
         foreach ($this->elements as $key => $element) {
             if ($predicate($key, $element)) {
@@ -153,7 +153,7 @@ trait DoctrineCollectionOperations
      *
      * @return array{static, static}
      */
-    protected function doctrinePartition(Closure $predicate): array
+    private function doctrinePartition(Closure $predicate): array
     {
         $matching = [];
         $rest = [];
@@ -175,12 +175,12 @@ trait DoctrineCollectionOperations
      *
      * @return ArrayCollection<int, U>
      */
-    protected function doctrineMap(Closure $mapper): ArrayCollection
+    private function doctrineMap(Closure $mapper): ArrayCollection
     {
         return new ArrayCollection(array_map($mapper, $this->elements));
     }
 
-    protected function doctrineIndexOf(mixed $element): int|false
+    private function doctrineIndexOf(mixed $element): int|false
     {
         return $this->doPositionOf($this->elementType()->coerce($element, 0)) ?? false;
     }
@@ -188,17 +188,17 @@ trait DoctrineCollectionOperations
     /**
      * @return T|null
      */
-    protected function doctrineRemove(string|int $key): mixed
+    private function doctrineRemove(string|int $key): mixed
     {
         return is_int($key) ? $this->doRemoveAt($key) : null;
     }
 
-    protected function doctrineRemoveElement(mixed $element): bool
+    private function doctrineRemoveElement(mixed $element): bool
     {
         return $this->doRemoveElement($this->elementType()->coerce($element, 0));
     }
 
-    protected function doctrineSet(string|int $key, mixed $value): void
+    private function doctrineSet(string|int $key, mixed $value): void
     {
         if (!is_int($key)) {
             throw new InvalidArgument(sprintf('A list takes integer keys only, "%s" given', $key));
@@ -209,7 +209,7 @@ trait DoctrineCollectionOperations
     /**
      * @return static
      */
-    protected function doctrineFilter(Closure $predicate): self
+    private function doctrineFilter(Closure $predicate): self
     {
         return $this->copyWith($this->kept($predicate, true));
     }
@@ -217,12 +217,12 @@ trait DoctrineCollectionOperations
     /**
      * @return ArrayIterator<int, T>
      */
-    protected function doctrineIterator(): ArrayIterator
+    private function doctrineIterator(): ArrayIterator
     {
         return new ArrayIterator($this->elements);
     }
 
-    protected function doctrineOffsetExists(mixed $offset): bool
+    private function doctrineOffsetExists(mixed $offset): bool
     {
         return is_int($offset) && array_key_exists($offset, $this->elements);
     }
@@ -230,12 +230,12 @@ trait DoctrineCollectionOperations
     /**
      * @return T|null
      */
-    protected function doctrineOffsetGet(mixed $offset): mixed
+    private function doctrineOffsetGet(mixed $offset): mixed
     {
         return is_int($offset) ? $this->doGet($offset) : null;
     }
 
-    protected function doctrineOffsetSet(mixed $offset, mixed $value): void
+    private function doctrineOffsetSet(mixed $offset, mixed $value): void
     {
         if ($offset === null) {
             $this->doctrineAdd($value);
@@ -248,7 +248,7 @@ trait DoctrineCollectionOperations
         $this->doctrineSet($offset, $value);
     }
 
-    protected function doctrineOffsetUnset(mixed $offset): void
+    private function doctrineOffsetUnset(mixed $offset): void
     {
         if (is_int($offset)) {
             $this->doRemoveAt($offset);
@@ -258,7 +258,7 @@ trait DoctrineCollectionOperations
     /**
      * @return static
      */
-    protected function doctrineMatching(Criteria $criteria): self
+    private function doctrineMatching(Criteria $criteria): self
     {
         return $this->copyWith(array_values((new ArrayCollection($this->elements))->matching($criteria)->toArray()));
     }

@@ -51,4 +51,9 @@ final class StrictEqualityTest extends TestCase
         self::assertSame('f:INF', $equality->hashKey(INF));
         self::assertNotSame($equality->hashKey(0.1), $equality->hashKey(0.1 + 1e-17 * 3));
     }
+
+    public function testValuesWithoutAKeyAreComparedPairwise(): void
+    {
+        self::assertNull((new StrictEquality())->hashKey([1]));
+    }
 }

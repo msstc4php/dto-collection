@@ -59,4 +59,13 @@ final class ItemListTest extends TestCase
         self::assertSame([$item], $mapped->toArray());
         self::assertSame([2], ItemList::of($item)->mapInto(IntegerList::class, static fn (Item $element): int => $element->score + 1)->toArray());
     }
+
+    public function testNamedVariadicArgumentsStayAList(): void
+    {
+        $a = new Item('a', 1);
+        $b = new Item('b', 2);
+
+        self::assertSame([$a, $b], ItemList::of($a)->with(...['extra' => $b])->toArray());
+        self::assertSame([$b, $a], ItemList::of($a)->withPrepended(...['extra' => $b])->toArray());
+    }
 }

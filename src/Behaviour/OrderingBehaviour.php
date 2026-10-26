@@ -74,9 +74,8 @@ trait OrderingBehaviour
     {
         $keys = array_map($selector, $this->elements);
         $positions = array_keys($this->elements);
-        $direction = $descending ? -1 : 1;
-        usort($positions, static function (int $left, int $right) use ($keys, $direction): int {
-            $order = $direction * ($keys[$left] <=> $keys[$right]);
+        usort($positions, static function (int $left, int $right) use ($keys, $descending): int {
+            $order = $descending ? $keys[$right] <=> $keys[$left] : $keys[$left] <=> $keys[$right];
 
             return $order !== 0 ? $order : $left <=> $right;
         });

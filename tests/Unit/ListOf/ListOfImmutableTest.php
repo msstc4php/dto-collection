@@ -29,4 +29,17 @@ final class ListOfImmutableTest extends ImmutableContract
 
         $list = ListOf::integers([1])->with(2, 'x');
     }
+
+    public function testWithReplacedReportsWhichArgumentIsWrong(): void
+    {
+        try {
+            $list = ListOf::integers([1])->withReplaced('x', 2);
+            self::fail('a string was accepted');
+        } catch (ElementTypeMismatch $exception) {
+            self::assertSame('Element #0 must be int, string given', $exception->getMessage());
+        }
+
+        $this->expectExceptionMessage('Element #1 must be int, string given');
+        $list = ListOf::integers([1])->withReplaced(1, 'x');
+    }
 }

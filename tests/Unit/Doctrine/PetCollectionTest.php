@@ -255,4 +255,44 @@ final class PetCollectionTest extends TestCase
         self::assertEquals([new Pet('ada', 9)], $matching->toArray());
         self::assertSame([0], array_keys($matching->toArray()));
     }
+
+    public function testMixedMethodsReportArgumentPositionZero(): void
+    {
+        $pets = PetCollection::of($this->rex);
+        $calls = [
+            static fn (): bool => $pets->contains('rex'),
+            static fn (): int|string|false => $pets->indexOf('rex'),
+            // Reason: the wrong element type is the input under test.
+            static fn (): bool => $pets->removeElement('rex'), // @phpstan-ignore argument.type
+        ];
+        foreach ($calls as $call) {
+            try {
+                $call();
+                self::fail('a string was accepted');
+            } catch (ElementTypeMismatch $exception) {
+                self::assertStringStartsWith('Element #0 must be', $exception->getMessage());
+            }
+        }
+    }
+
+    public function testAddReportsTheNextPosition(): void
+    {
+        $this->expectExceptionMessage('Element #1 must be');
+
+        // Reason: the wrong element type is the input under test.
+        PetCollection::of($this->rex)->add('tom'); // @phpstan-ignore argument.type
+    }
+
+    public function testLastMovesThePointerToTheLastElement(): void
+    {
+        $pets = PetCollection::of($this->rex);
+        $last = $pets->last();
+
+        self::assertSame(0, $pets->key());
+
+        $empty = new PetCollection();
+        $none = $empty->last();
+        $empty->add($this->tom);
+        self::assertSame($this->tom, $empty->current());
+    }
 }

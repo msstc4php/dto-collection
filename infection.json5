@@ -4,6 +4,8 @@
         "directories": ["src"]
     },
     "timeout": 30,
+    // The integration suite needs MongoDB; the unit suite covers src/ on its own.
+    "testFrameworkOptions": "--testsuite=unit",
     // Equivalent mutants are ignored below with a reason each, so the floor sits one below the 100 % target.
     "minMsi": 99,
     "minCoveredMsi": 99,
@@ -13,6 +15,45 @@
         "json": "var/infection/infection.json"
     },
     "mutators": {
-        "@default": true
+        "@default": true,
+        // Equivalent: the do*() methods are the traits' protected API for the concrete class and its subclasses; private
+        // works too inside the class that uses the trait, but would lock out subclasses of the non-final ODM variant.
+        "ProtectedVisibility": {
+            "ignore": [
+                "MSSTC4PHP\\DtoCollection\\Behaviour\\*",
+            ],
+        },
+        // Equivalent: a memo of closure signatures; recomputing gives the same answer.
+        "AssignCoalesce": {
+            "ignore": [
+                "MSSTC4PHP\\DtoCollection\\Internal\\Callback::takes",
+            ],
+        },
+        // Equivalent: numbers() runs after isNumeric() and join() after isString(), so every element already passes the
+        // filter, and array_sum()/min()/max() ignore keys; the filters exist to prove the element type to PHPStan.
+        "LogicalOrAllSubExprNegation": {
+            "ignore": [
+                "MSSTC4PHP\\DtoCollection\\Behaviour\\NumericBehaviour::numbers",
+            ],
+        },
+        "UnwrapArrayFilter": {
+            "ignore": [
+                "MSSTC4PHP\\DtoCollection\\Behaviour\\NumericBehaviour::numbers",
+                "MSSTC4PHP\\DtoCollection\\Behaviour\\TextBehaviour::join",
+            ],
+        },
+        "UnwrapArrayValues": {
+            "ignore": [
+                "MSSTC4PHP\\DtoCollection\\Behaviour\\NumericBehaviour::numbers",
+                // Assigning two existing keys keeps their order; array_values() only proves the list to PHPStan.
+                "MSSTC4PHP\\DtoCollection\\Behaviour\\MutableBehaviour::swap",
+            ],
+        },
+        // Equivalent: no other hash key starts with a digit, so 'o:' as a suffix is as unique as a prefix.
+        "Concat": {
+            "ignore": [
+                "MSSTC4PHP\\DtoCollection\\Equality\\StrictEquality::hashKey",
+            ],
+        },
     }
 }

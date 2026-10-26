@@ -33,7 +33,7 @@ final class ElementTypeParser
 
         $nullable = false;
         if (str_starts_with($source, '?')) {
-            $source = trim(substr($source, 1));
+            $source = substr($source, 1);
             if (strpbrk($source, '?|&') !== false) {
                 throw self::invalid($declaration, '"?" applies to a single type only');
             }
@@ -41,7 +41,6 @@ final class ElementTypeParser
         }
 
         $types = [];
-        $seen = [];
         foreach (explode('|', $source) as $part) {
             $part = trim($part);
             if (strtolower($part) === 'null') {
@@ -54,11 +53,10 @@ final class ElementTypeParser
             }
             $type = self::single($declaration, $part);
             $key = $type->describe();
-            if (isset($seen[$key])) {
+            if (array_key_exists($key, $types)) {
                 throw self::invalid($declaration, sprintf('%s appears twice', $key));
             }
-            $seen[$key] = true;
-            $types[] = $type;
+            $types[$key] = $type;
         }
         if ($types === []) {
             throw self::invalid($declaration, 'null alone is not an element type');
@@ -115,9 +113,8 @@ final class ElementTypeParser
         if (preg_match(self::CLASS_NAME, $name) !== 1) {
             throw self::invalid($declaration, sprintf('"%s" is not a class name', $name));
         }
-        $name = ltrim($name, '\\');
         if (!class_exists($name) && !interface_exists($name)) {
-            throw self::invalid($declaration, sprintf('class or interface "%s" does not exist', $name));
+            throw self::invalid($declaration, sprintf('class or interface "%s" does not exist', ltrim($name, '\\')));
         }
 
         return $name;

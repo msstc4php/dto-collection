@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: ['1.x']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  # One group per pull request, so a new push cancels its older run; one per commit on 1.x, so each one runs.
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Tests on PHP ${{ matrix.php }} (${{ matrix.dependencies }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.1', '8.2', '8.3', '8.4']
+        dependencies: [highest]
+        include:
+          # The dependency floors on the PHP floor; on 8.4 the old proxy-manager-lts they pull in is itself deprecated.
+          - php: '8.1'
+            dependencies: lowest
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ping:1})'"
+          --health-interval 2s --health-timeout 5s --health-retries 30
+    env:
+      DTO_COLLECTION_MONGODB_URI: mongodb://127.0.0.1:27017
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mongodb
+          coverage: none
+      - name: Locate the Composer cache
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v5
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ matrix.php }}-${{ matrix.dependencies }}-${{ hashFiles('composer.json') }}
+          restore-keys: composer-${{ matrix.php }}-${{ matrix.dependencies }}-
+      - name: Install dependencies
+        # composer.json pins the platform to 8.1 for local installs; CI resolves for the PHP it runs on, so PHP 8.4
+        # gets doctrine/collections 3 and the older ones get 2.
+        run: |
+          composer config platform --unset
+          composer update --no-interaction --no-progress ${{ matrix.dependencies == 'lowest' && '--prefer-lowest --prefer-stable' || '' }}
+      - name: Lint sources with this PHP
+        run: find src tests -name '*.php' -print0 | xargs -0 -n1 php -l > /dev/null
+      - name: PHPUnit (unit and ODM integration)
+        run: vendor/bin/phpunit --fail-on-skipped
+
+  static:
+    name: Static analysis (doctrine/collections ${{ matrix.collections }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The ODM variant switches its signatures on the installed major, so both are analysed.
+        collections: ['2', '3']
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mongodb
+          coverage: none
+      - name: Install dependencies
+        run: |
+          ${{ matrix.collections == '3' && 'composer config platform.php 8.4.0' || 'true' }}
+          composer update --no-interaction --no-progress
+      - run: composer install --no-interaction --no-progress --working-dir=tools
+      - run: tools/vendor/bin/phpstan analyse --memory-limit=512M -c phpstan.dist.neon --no-progress
+      - run: tools/vendor/bin/php-cs-fixer check
+      - run: composer validate --strict --no-check-publish
+      - run: tools/vendor/bin/rector process -n
+      - run: tools/vendor/bin/deptrac analyse --config-file=deptrac.yaml --no-progress --fail-on-uncovered
+      - run: composer audit
+
+  bc:
+    name: BC check (Roave)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # the check reads the previous release from git
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mongodb
+          coverage: none
+      - run: composer install --no-interaction --no-progress --working-dir=tools
+      - run: |
+          if ! base=$(git describe --tags --abbrev=0 --match 'v[0-9]*' --exclude='*-*' 2>/dev/null); then
+            echo "No stable release tag yet: nothing to compare against."
+            exit 0
+          fi
+          echo "Comparing against ${base}"
+          tools/vendor/bin/roave-backward-compatibility-check --from="${base}" --install-development-dependencies --format=github-actions --no-interaction
+
+  mutation:
+    name: Mutation testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mongodb
+          coverage: xdebug
+      - run: composer install --no-interaction --no-progress
+      - run: composer install --no-interaction --no-progress --working-dir=tools
+      - run: make infection THREADS=4

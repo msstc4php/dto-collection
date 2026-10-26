@@ -179,4 +179,40 @@ final class ElementTypeTest extends TestCase
         self::assertSame('bool', ElementType::boolean()->describe());
         self::assertSame([], ElementType::integer()->objectBranches());
     }
+
+    public function testUnionOfOneBranchKeepsItsMeaning(): void
+    {
+        self::assertTrue(ElementType::union(ElementType::string())->isString());
+    }
+
+    public function testIntWithoutAFloatBranchIsRejected(): void
+    {
+        $this->expectException(ElementTypeMismatch::class);
+
+        ElementType::string()->coerce(1, 0);
+    }
+
+    public function testObjectBranchesIsAList(): void
+    {
+        self::assertSame([[Cat::class]], ElementType::union(ElementType::integer(), ElementType::ofClass(Cat::class))->objectBranches());
+    }
+
+    public function testEqualsComparesEveryBranch(): void
+    {
+        self::assertFalse(ElementType::parse('bool|int')->equals(ElementType::parse('bool|string')));
+        self::assertTrue(ElementType::intersection(Countable::class, Traversable::class)->equals(ElementType::intersection(Traversable::class, Countable::class)));
+    }
+
+    public function testIntersectionTakesNamedArguments(): void
+    {
+        self::assertSame([[Countable::class, Traversable::class]], ElementType::intersection(...['first' => Countable::class, 'second' => Traversable::class])->objectBranches());
+    }
+
+    public function testUnknownClassMessageHasNoLeadingBackslash(): void
+    {
+        $this->expectExceptionMessage('Class or interface "No\\Such" does not exist');
+
+        // Reason: the test feeds a name that is deliberately not a class-string.
+        ElementType::ofClass('\\No\\Such'); // @phpstan-ignore argument.type
+    }
 }

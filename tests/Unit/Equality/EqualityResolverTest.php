@@ -45,4 +45,12 @@ final class EqualityResolverTest extends TestCase
     {
         self::assertInstanceOf(StrictEquality::class, EqualityResolver::forType(ElementType::intersection(Countable::class, Traversable::class)));
     }
+
+    public function testResolverUnionOfTwoEquatables(): void
+    {
+        $equality = EqualityResolver::forType(ElementType::parse(Item::class . '|' . Cat::class));
+
+        self::assertTrue($equality->equals(new Item('a', 1), new Item('a', 2)));
+        self::assertTrue($equality->equals(new Cat('x'), new Cat('x')));
+    }
 }

@@ -48,6 +48,7 @@ abstract class SetOperationsContract extends ListContractCase
         self::assertSame([$a, $a], $this->items($a, $a, $b, $c)->diff([new Item('b', 0)], [new Item('c', 0)])->toArray());
         self::assertSame([$a, $b], $this->items($a, $b)->diff()->toArray());
         self::assertSame([], $this->items($a)->diff([new Item('a', 5)])->toArray());
+        self::assertSame([$b], $this->items($a, $b)->diff([$a])->toArray());
     }
 
     public function testDiffBy(): void
@@ -79,6 +80,7 @@ abstract class SetOperationsContract extends ListContractCase
         self::assertSame([$a], $this->items($a, $b)->intersectBy(static fn (Item $item): int => $item->score, [new Item('z', 1)], [new Item('y', 1)])->toArray());
         self::assertSame([], $this->items($a, $b)->intersectBy(static fn (Item $item): int => $item->score, [new Item('z', 1)], [new Item('y', 2)])->toArray());
         self::assertSame([$a, $b], $this->items($a, $b)->intersectBy(static fn (Item $item): int => $item->score)->toArray());
+        self::assertSame([$b], $this->items($a, $b)->intersectBy(static fn (Item $item): int => $item->score, [new Item('z', 2)])->toArray());
     }
 
     public function testUnionAndMerge(): void

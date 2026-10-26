@@ -61,6 +61,7 @@ abstract class StructuringMappingContract extends ListContractCase
         self::assertSame([$this->c], $chunks[1]->toArray());
         self::assertSame([], $this->items()->chunk(3));
         self::assertCount(1, $this->items($this->a)->chunk(5));
+        self::assertCount(2, $this->items($this->a, $this->b)->chunk(1));
     }
 
     public function testChunkZero(): void

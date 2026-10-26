@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- Everything under MSSTC4PHP\DtoCollection is public API except Internal\ (marked @internal). -->
+<roave-bc-check
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="tools/vendor/roave/backward-compatibility-check/Resources/schema.xsd">
+    <baseline>
+        <ignored-regex>#MSSTC4PHP\\DtoCollection\\Internal\\#</ignored-regex>
+    </baseline>
+</roave-bc-check>
