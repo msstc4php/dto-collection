@@ -13,7 +13,7 @@ use ReflectionAttribute;
 use ReflectionClass;
 
 #[TypedCollection('App\Collection\Things', Variant::Immutable)]
-#[TypedCollection('App\Document\ThingCollection', Variant::Odm, nullable: true, elementType: '\Countable')]
+#[TypedCollection('App\Document\ThingCollection', Variant::Mutable, nullable: true, elementType: '\Countable')]
 final class TypedCollectionTest extends TestCase
 {
     public function testRepeatableOnClass(): void
@@ -28,7 +28,7 @@ final class TypedCollectionTest extends TestCase
         self::assertSame(Variant::Immutable, $attributes[0]->variant);
         self::assertFalse($attributes[0]->nullable);
         self::assertNull($attributes[0]->elementType);
-        self::assertSame(Variant::Odm, $attributes[1]->variant);
+        self::assertSame(Variant::Mutable, $attributes[1]->variant);
         self::assertTrue($attributes[1]->nullable);
         self::assertSame('\Countable', $attributes[1]->elementType);
     }
@@ -43,6 +43,26 @@ final class TypedCollectionTest extends TestCase
         $this->expectException(InvalidElementType::class);
 
         new TypedCollection('X', Variant::Mutable, elementType: 'mixed');
+    }
+
+    public function testRejectsNullableOdmCollections(): void
+    {
+        $this->expectException(InvalidArgument::class);
+        $this->expectExceptionMessage('Doctrine ODM does not store null elements');
+
+        new TypedCollection('App\Document\Things', Variant::Odm, nullable: true);
+    }
+
+    public function testRejectsNullableOdmElementType(): void
+    {
+        $this->expectException(InvalidArgument::class);
+
+        new TypedCollection('App\Document\Things', Variant::Odm, elementType: '?\Countable');
+    }
+
+    public function testAcceptsOdmCollections(): void
+    {
+        self::assertSame(Variant::Odm, (new TypedCollection('App\Document\Things', Variant::Odm, elementType: '\Countable'))->variant);
     }
 
     public function testRejectsEmptyClass(): void

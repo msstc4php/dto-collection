@@ -12,7 +12,7 @@ use MSSTC4PHP\DtoCollection\Exception\InvalidArgument;
  * Asks dto-collection-generator for a typed collection of the class it marks. Repeat it for several collections.
  *
  * Without elementType the element type is the marked class; with it, a declaration (interface, parent, union)
- * that the marked class belongs to.
+ * that the marked class belongs to. ODM collections cannot be nullable: Doctrine ODM fails on null elements.
  */
 #[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 final class TypedCollection
@@ -29,8 +29,9 @@ final class TypedCollection
         if (trim($class) === '') {
             throw new InvalidArgument('The collection class name must not be empty');
         }
-        if ($elementType !== null) {
-            ElementType::parse($elementType);
+        $type = $elementType === null ? null : ElementType::parse($elementType);
+        if ($variant === Variant::Odm && ($nullable || $type?->isNullable() === true)) {
+            throw new InvalidArgument(sprintf('%s: Doctrine ODM does not store null elements, so an ODM collection cannot be nullable', $class));
         }
     }
 }

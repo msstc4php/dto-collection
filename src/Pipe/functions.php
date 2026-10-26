@@ -416,7 +416,7 @@ if (!\function_exists(__NAMESPACE__ . '\\sliced')) {
      * @return Closure<T>(ReadableList<T>): ReadableList<T>
      */
     #[NoDiscard]
-    function sliced(int $offset, ?int $length = null): Closure
+    function sliced(int $offset, int $length = PHP_INT_MAX): Closure
     {
         return static fn (ReadableList $list): ReadableList => $list->sliced($offset, $length);
     }

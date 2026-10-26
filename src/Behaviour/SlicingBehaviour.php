@@ -57,10 +57,12 @@ trait SlicingBehaviour
     /**
      * array_slice() semantics: a negative offset counts from the end, a negative length stops that far from the end.
      *
+     * No `?int $length = null`: Doctrine ODM's generated subclass would redeclare it implicitly nullable (deprecated in PHP 8.4).
+     *
      * @return static
      */
     #[NoDiscard]
-    public function sliced(int $offset, ?int $length = null): self
+    public function sliced(int $offset, int $length = PHP_INT_MAX): self
     {
         return $this->copyWith(array_slice($this->elements, $offset, $length));
     }

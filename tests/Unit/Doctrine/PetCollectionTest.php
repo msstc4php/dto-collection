@@ -36,7 +36,7 @@ final class PetCollectionTest extends TestCase
 
     public function testOdmCanGenerateItsPersistentSubclass(): void
     {
-        $command = sprintf('%s %s %s 2>&1', escapeshellarg(PHP_BINARY), escapeshellarg(__DIR__ . '/generate-persistent-collection.php'), escapeshellarg(PetCollection::class) . ' ' . escapeshellarg(OdmItemCollection::class));
+        $command = sprintf('%s -d error_reporting=-1 -d display_errors=stderr %s %s 2>&1', escapeshellarg(PHP_BINARY), escapeshellarg(__DIR__ . '/generate-persistent-collection.php'), escapeshellarg(PetCollection::class) . ' ' . escapeshellarg(OdmItemCollection::class));
         exec($command, $output, $exitCode);
 
         self::assertSame(0, $exitCode, implode("\n", $output));
