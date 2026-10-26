@@ -197,4 +197,102 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
      * @return T|null the first of the largest
      */
     public function maxBy(Closure $selector): mixed;
+
+    /**
+     * @param Closure(T, int): bool $predicate
+     *
+     * @return static
+     */
+    public function filter(Closure $predicate): self;
+
+    /**
+     * @param Closure(T, int): bool $predicate
+     *
+     * @return static
+     */
+    public function reject(Closure $predicate): self;
+
+    /**
+     * @param Closure(T, int): T $mapper its results are checked against the element type
+     *
+     * @return static
+     */
+    public function transform(Closure $mapper): self;
+
+    /**
+     * array_slice() semantics: a negative offset counts from the end, a negative length stops that far from the end.
+     *
+     * @return static
+     */
+    public function sliced(int $offset, ?int $length = null): self;
+
+    /**
+     * @return static
+     *
+     * @throws Exception\InvalidArgument on a negative count
+     */
+    public function take(int $count): self;
+
+    /**
+     * @return static
+     *
+     * @throws Exception\InvalidArgument on a negative count
+     */
+    public function takeLast(int $count): self;
+
+    /**
+     * @return static
+     *
+     * @throws Exception\InvalidArgument on a negative count
+     */
+    public function drop(int $count): self;
+
+    /**
+     * @return static
+     *
+     * @throws Exception\InvalidArgument on a negative count
+     */
+    public function dropLast(int $count): self;
+
+    /**
+     * @param Closure(T, int): bool $predicate
+     *
+     * @return static
+     */
+    public function takeWhile(Closure $predicate): self;
+
+    /**
+     * @param Closure(T, int): bool $predicate
+     *
+     * @return static
+     */
+    public function dropWhile(Closure $predicate): self;
+
+    /**
+     * A stable sort by $comparator.
+     *
+     * @param Closure(T, T): int $comparator
+     *
+     * @return static
+     */
+    public function sorted(Closure $comparator): self;
+
+    /**
+     * A stable sort by the values $selector returns, compared with <=>. Chain calls, least significant key first, to sort by several keys.
+     *
+     * @param Closure(T): mixed $selector
+     *
+     * @return static
+     */
+    public function sortedBy(Closure $selector, bool $descending = false): self;
+
+    /**
+     * @return static
+     */
+    public function reversed(): self;
+
+    /**
+     * @return static
+     */
+    public function shuffled(): self;
 }
