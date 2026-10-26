@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MSSTC4PHP\DtoCollection\Tests\Unit;
 
+use ArrayAccess;
 use ArrayObject;
 use Countable;
 use MSSTC4PHP\DtoCollection\ElementType;
@@ -13,6 +14,7 @@ use MSSTC4PHP\DtoCollection\Exception\InvalidElementType;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Cat;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Dog;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Item;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Traversable;
 
@@ -201,6 +203,76 @@ final class ElementTypeTest extends TestCase
     {
         self::assertFalse(ElementType::parse('bool|int')->equals(ElementType::parse('bool|string')));
         self::assertTrue(ElementType::intersection(Countable::class, Traversable::class)->equals(ElementType::intersection(Traversable::class, Countable::class)));
+    }
+
+    public function testAndInstanceOfIntersectsAClass(): void
+    {
+        $type = ElementType::ofClass(Countable::class)->andInstanceOf(Traversable::class);
+
+        self::assertTrue($type->equals(ElementType::intersection(Countable::class, Traversable::class)));
+        self::assertTrue($type->accepts(new ArrayObject()));
+        self::assertFalse($type->accepts(new class implements Countable {
+            public function count(): int
+            {
+                return 0;
+            }
+        }));
+        self::assertFalse($type->isNullable());
+    }
+
+    public function testAndInstanceOfExtendsAnIntersection(): void
+    {
+        $type = ElementType::ofClass(Countable::class)->andInstanceOf(Traversable::class)->andInstanceOf('\\' . ArrayAccess::class);
+
+        self::assertSame([[Countable::class, Traversable::class, ArrayAccess::class]], $type->objectBranches());
+    }
+
+    public function testAndInstanceOfRejectsARepeatedClass(): void
+    {
+        $this->expectException(InvalidElementType::class);
+        $this->expectExceptionMessage('An intersection repeats a class: Countable&Traversable&Countable');
+
+        ElementType::ofClass(Countable::class)->andInstanceOf(Traversable::class)->andInstanceOf('\\' . Countable::class);
+    }
+
+    /**
+     * @return iterable<string, array{ElementType<mixed>, string}>
+     */
+    public static function provideTypesWithoutASingleClassBranch(): iterable
+    {
+        yield 'scalar' => [ElementType::integer(), 'int'];
+        yield 'nullable' => [ElementType::ofClass(Countable::class)->nullable(), 'Countable|null'];
+        yield 'union' => [ElementType::union(ElementType::ofClass(Cat::class), ElementType::ofClass(Dog::class)), Cat::class . '|' . Dog::class];
+    }
+
+    /**
+     * @param ElementType<mixed> $type
+     */
+    #[DataProvider('provideTypesWithoutASingleClassBranch')]
+    public function testAndInstanceOfNeedsOneNonNullableClassBranch(ElementType $type, string $described): void
+    {
+        $this->expectException(InvalidElementType::class);
+        $this->expectExceptionMessage(sprintf('Only a class or an intersection can be intersected with Traversable, not %s', $described));
+
+        $type->andInstanceOf(Traversable::class);
+    }
+
+    public function testAndInstanceOfReportsTheBranchBeforeAnUnknownClass(): void
+    {
+        $this->expectException(InvalidElementType::class);
+        $this->expectExceptionMessage('Only a class or an intersection can be intersected with No\\Such, not int');
+
+        // Reason: the test feeds a name that is deliberately not a class-string.
+        ElementType::integer()->andInstanceOf('\\No\\Such'); // @phpstan-ignore argument.type
+    }
+
+    public function testAndInstanceOfRejectsAnUnknownClass(): void
+    {
+        $this->expectException(InvalidElementType::class);
+        $this->expectExceptionMessage('Class or interface "No\\Such" does not exist');
+
+        // Reason: the test feeds a name that is deliberately not a class-string.
+        ElementType::ofClass(Countable::class)->andInstanceOf('No\\Such'); // @phpstan-ignore argument.type
     }
 
     public function testIntersectionTakesNamedArguments(): void

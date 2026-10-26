@@ -6,7 +6,11 @@
   classes (intersection) + `nullable` flag. `coerce()` widens int→float only when a float
   branch exists and no int branch. `isNumeric()`/`isString()` are false for nullable types.
   `describe()` keeps declaration order, `null` last; `equals()` is order-insensitive, also
-  inside intersections.
+  inside intersections. `intersection()` is PHPDoc-typed `self<object>` (variadic class-strings
+  cannot be intersected in PHPDoc); `andInstanceOf()` (1.1) is `self<T&C>`, so the generator
+  uses `ofClass(A)->andInstanceOf(B)`. It accepts only a single non-nullable object branch and
+  validates through `intersection()`. `tests/Types/*.php` are `assertType()` files: analysed by
+  PHPStan, never run.
 - **Parser** (`Internal\ElementTypeParser`): `?T` only as the whole declaration; `|` with `&` or
   any `(` → DNF → rejected (PHP 8.2); scalars case-insensitive; messages are pinned by tests.
 - **Equality:** `StrictEquality` (`===`; float keys normalise -0.0; NAN has no key),

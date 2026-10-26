@@ -29,7 +29,8 @@ with `equals()` and everything else with `===` (see [equality.md](equality.md)).
 |---|---|
 | `ElementType::integer()`, `string()`, `float()`, `boolean()` | that scalar; `float` also takes an int and widens it, like a native `float` parameter under `strict_types` |
 | `ElementType::ofClass(Foo::class)` | `Foo` and its subtypes |
-| `ElementType::intersection(A::class, B::class)` | objects that are both |
+| `ElementType::intersection(A::class, B::class)` | objects that are both; PHPStan reads it as `ElementType<object>` |
+| `ElementType::ofClass(A::class)->andInstanceOf(B::class)` | the same, read by PHPStan as `ElementType<A&B>`; chain it for more classes |
 | `ElementType::union($a, $b)` | either; an int stays an int when `int` is one of the branches |
 | `->nullable()` | also `null` |
 | `ElementType::parse('?int')`, `'Cat\|Dog\|null'`, `'Countable&Traversable'` | the same, from a declaration |
