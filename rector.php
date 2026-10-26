@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector;
 use Rector\CodingStyle\Rector\Stmt\NewlineAfterStatementRector;
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\ClassMethod\RemoveDuplicatedReturnSelfDocblockRector;
 use Rector\ValueObject\PhpVersion;
 
 return RectorConfig::configure()
@@ -30,5 +31,7 @@ return RectorConfig::configure()
     ->withSkip([
         NewlineAfterStatementRector::class,
         CatchExceptionNameMatchingTypeRector::class,
+        // `@return static` over a native `self` is how queries keep the concrete class for PHPStan; native static breaks ODM proxies.
+        RemoveDuplicatedReturnSelfDocblockRector::class,
     ])
 ;
