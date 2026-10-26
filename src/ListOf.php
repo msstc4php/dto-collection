@@ -7,6 +7,7 @@ namespace MSSTC4PHP\DtoCollection;
 use MSSTC4PHP\DtoCollection\Behaviour\GenericReadingFacade;
 use MSSTC4PHP\DtoCollection\Behaviour\ListStorage;
 use MSSTC4PHP\DtoCollection\Behaviour\ReadingBehaviour;
+use MSSTC4PHP\DtoCollection\Behaviour\SearchingBehaviour;
 use MSSTC4PHP\DtoCollection\Equality\Equality;
 use MSSTC4PHP\DtoCollection\Equality\EqualityResolver;
 use NoDiscard;
@@ -25,6 +26,9 @@ final class ListOf implements ReadableList
 
     /** @use ReadingBehaviour<T> */
     use ReadingBehaviour;
+
+    /** @use SearchingBehaviour<T> */
+    use SearchingBehaviour;
 
     /** @use GenericReadingFacade<T> */
     use GenericReadingFacade;

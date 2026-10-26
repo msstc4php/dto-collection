@@ -4,23 +4,11 @@ declare(strict_types=1);
 
 namespace MSSTC4PHP\DtoCollection\Tests\Contract;
 
-use MSSTC4PHP\DtoCollection\ReadableList;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Item;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Tag;
-use PHPUnit\Framework\TestCase;
 
-abstract class ReadableListContract extends TestCase
+abstract class ReadableListContract extends ListContractCase
 {
-    /**
-     * @return ReadableList<Item>
-     */
-    abstract protected function items(Item ...$items): ReadableList;
-
-    /**
-     * @return ReadableList<Tag>
-     */
-    abstract protected function tags(Tag ...$tags): ReadableList;
-
     public function testCountAndEmptiness(): void
     {
         self::assertCount(0, $this->items());

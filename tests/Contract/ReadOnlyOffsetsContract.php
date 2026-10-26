@@ -5,19 +5,15 @@ declare(strict_types=1);
 namespace MSSTC4PHP\DtoCollection\Tests\Contract;
 
 use MSSTC4PHP\DtoCollection\Exception\ReadOnlyCollection;
-use MSSTC4PHP\DtoCollection\ReadableList;
 use MSSTC4PHP\DtoCollection\Tests\Fixture\Item;
 
 /**
  * Every variant except ODM, whose Doctrine interface requires writable offsets.
+ *
+ * @phpstan-require-extends ListContractCase
  */
 trait ReadOnlyOffsetsContract
 {
-    /**
-     * @return ReadableList<Item>
-     */
-    abstract protected function items(Item ...$items): ReadableList;
-
     public function testOffsetSetIsReadOnly(): void
     {
         $list = $this->items(new Item('a', 1));
