@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace MSSTC4PHP\DtoCollection;
 
+use MSSTC4PHP\DtoCollection\Behaviour\AggregatingBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\GenericReadingFacade;
 use MSSTC4PHP\DtoCollection\Behaviour\ListStorage;
+use MSSTC4PHP\DtoCollection\Behaviour\NumericBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\ReadingBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\SearchingBehaviour;
+use MSSTC4PHP\DtoCollection\Behaviour\TextBehaviour;
 use MSSTC4PHP\DtoCollection\Equality\Equality;
 use MSSTC4PHP\DtoCollection\Equality\EqualityResolver;
 use NoDiscard;
@@ -29,6 +32,12 @@ final class ListOf implements ReadableList
 
     /** @use SearchingBehaviour<T> */
     use SearchingBehaviour;
+
+    /** @use AggregatingBehaviour<T> */
+    use AggregatingBehaviour;
+
+    use NumericBehaviour;
+    use TextBehaviour;
 
     /** @use GenericReadingFacade<T> */
     use GenericReadingFacade;

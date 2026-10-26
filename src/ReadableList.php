@@ -149,4 +149,52 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
      * @param Closure(T, int): bool $predicate
      */
     public function none(Closure $predicate): bool;
+
+    /**
+     * @template R
+     *
+     * @param Closure(R, T, int): R $reducer the index is passed when the reducer declares a third parameter
+     * @param R $initial
+     *
+     * @return R
+     */
+    public function reduce(Closure $reducer, mixed $initial = null): mixed;
+
+    /**
+     * @param Closure(T, int): bool $predicate
+     *
+     * @return non-negative-int
+     */
+    public function countWhere(Closure $predicate): int;
+
+    /**
+     * @param Closure(T): array-key $selector
+     *
+     * @return array<array-key, positive-int> keys in the order they are first seen
+     */
+    public function countBy(Closure $selector): array;
+
+    /**
+     * @param Closure(T): (int|float) $selector
+     */
+    public function sumBy(Closure $selector): int|float;
+
+    /**
+     * @param Closure(T): (int|float) $selector
+     */
+    public function averageBy(Closure $selector): ?float;
+
+    /**
+     * @param Closure(T): mixed $selector its results are compared with <=>
+     *
+     * @return T|null the first of the smallest
+     */
+    public function minBy(Closure $selector): mixed;
+
+    /**
+     * @param Closure(T): mixed $selector its results are compared with <=>
+     *
+     * @return T|null the first of the largest
+     */
+    public function maxBy(Closure $selector): mixed;
 }

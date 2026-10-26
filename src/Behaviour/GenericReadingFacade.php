@@ -149,4 +149,26 @@ trait GenericReadingFacade
     {
         return $this->doPositionOf($this->elementType()->coerce($element, 0));
     }
+
+    /**
+     * @param Closure(T): mixed $selector
+     *
+     * @return T|null
+     */
+    #[NoDiscard]
+    public function minBy(Closure $selector): mixed
+    {
+        return $this->doMinBy($selector);
+    }
+
+    /**
+     * @param Closure(T): mixed $selector
+     *
+     * @return T|null
+     */
+    #[NoDiscard]
+    public function maxBy(Closure $selector): mixed
+    {
+        return $this->doMaxBy($selector);
+    }
 }
