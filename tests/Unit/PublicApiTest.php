@@ -22,9 +22,9 @@ final class PublicApiTest extends TestCase
 {
     /**
      * Results that may be ignored: each() returns the list itself, the removals report what they removed, next()
-     * moves Doctrine's pointer; add/set/offsetSet/offsetUnset have no native void on doctrine/collections 2.
+     * moves Doctrine's pointer; add/set/clear/offsetSet/offsetUnset have no native void on doctrine/collections 2.
      */
-    private const MAY_DISCARD = ['each', 'remove', 'removeElement', 'removeIf', 'pop', 'shift', 'next', 'add', 'set', 'offsetSet', 'offsetUnset'];
+    private const MAY_DISCARD = ['each', 'remove', 'removeElement', 'removeIf', 'pop', 'shift', 'next', 'add', 'set', 'clear', 'offsetSet', 'offsetUnset'];
 
     /**
      * @return iterable<string, array{class-string}>

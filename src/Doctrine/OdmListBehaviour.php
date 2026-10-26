@@ -20,6 +20,7 @@ trait OdmListBehaviour
      * @use DoctrineCollectionBehaviour<T>
      */
     use MutableListBehaviour, DoctrineCollectionBehaviour {
+        DoctrineCollectionBehaviour::clear insteadof MutableListBehaviour;
         DoctrineCollectionBehaviour::count insteadof MutableListBehaviour;
         DoctrineCollectionBehaviour::isEmpty insteadof MutableListBehaviour;
         DoctrineCollectionBehaviour::toArray insteadof MutableListBehaviour;

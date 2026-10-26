@@ -15,7 +15,12 @@ use Closure;
  */
 interface MutableList extends ReadableList
 {
-    public function clear(): void;
+    /**
+     * No native return type: Doctrine's Collection declares clear() as well (see ReadableList).
+     *
+     * @return void
+     */
+    public function clear();
 
     /**
      * A stable sort by $comparator.

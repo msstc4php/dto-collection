@@ -27,6 +27,8 @@ return (new PhpCsFixer\Config())
         'multiline_whitespace_before_semicolons' => ['strategy' => 'new_line_for_chained_calls'],
         'global_namespace_import' => ['import_classes' => true],
         'blank_line_before_statement' => ['statements' => ['declare', 'return']],
+        // Rector adds `: void` to methods with a body; the Doctrine-shared interface methods keep a PHPDoc-only void.
+        'void_return' => false,
     ])
     ->setFinder($finder)
     ->setParallelConfig(new PhpCsFixer\Runner\Parallel\ParallelConfig(4))

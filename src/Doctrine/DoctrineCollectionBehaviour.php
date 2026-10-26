@@ -296,6 +296,11 @@ if (class_exists(Criteria::class) && !defined(Criteria::class . '::ASC')) {
             $this->doctrineOffsetUnset($offset);
         }
 
+        public function clear(): void
+        {
+            $this->elements = [];
+        }
+
         /**
          * Criteria are applied as ArrayCollection applies them; the result is this list's class, reindexed.
          *
@@ -613,6 +618,14 @@ if (class_exists(Criteria::class) && !defined(Criteria::class . '::ASC')) {
         public function offsetUnset(mixed $offset)
         {
             $this->doctrineOffsetUnset($offset);
+        }
+
+        /**
+         * @return void
+         */
+        public function clear()
+        {
+            $this->elements = [];
         }
 
         /**
