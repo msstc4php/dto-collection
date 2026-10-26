@@ -363,4 +363,103 @@ interface ReadableList extends IteratorAggregate, Countable, JsonSerializable, A
      * @return static
      */
     public function merge(iterable ...$others): self;
+
+    /**
+     * @param Closure(T, int): bool $predicate
+     *
+     * @return array{static, static} the matching elements, then the rest
+     */
+    public function split(Closure $predicate): array;
+
+    /**
+     * @param Closure(T): array-key $selector
+     *
+     * @return array<array-key, static> groups in the order their keys are first seen
+     */
+    public function groupBy(Closure $selector): array;
+
+    /**
+     * @return list<static> the last chunk may be shorter
+     *
+     * @throws Exception\InvalidArgument when $size is below 1
+     */
+    public function chunk(int $size): array;
+
+    /**
+     * Windows of $size elements starting every $step elements; with $partial, the shorter windows at the end too.
+     *
+     * @return list<static>
+     *
+     * @throws Exception\InvalidArgument when $size or $step is below 1
+     */
+    public function windowed(int $size, int $step = 1, bool $partial = false): array;
+
+    /**
+     * @param Closure(T, T): bool $continues receives the previous and the current element
+     *
+     * @return list<static>
+     */
+    public function chunkWhile(Closure $continues): array;
+
+    /**
+     * @param Closure(T): array-key $selector
+     *
+     * @return array<array-key, T> the last element wins a key
+     */
+    public function keyBy(Closure $selector): array;
+
+    /**
+     * @template U
+     *
+     * @param ElementType<U>|string $type the results are checked against it
+     * @param Closure(T, int): U $mapper
+     *
+     * @return ($type is string ? ListOf<mixed> : ListOf<U>)
+     */
+    public function mapTo(ElementType|string $type, Closure $mapper): ListOf;
+
+    /**
+     * @template U
+     *
+     * @param ElementType<U>|string $type the results are checked against it
+     * @param Closure(T, int): iterable<U> $mapper
+     *
+     * @return ($type is string ? ListOf<mixed> : ListOf<U>)
+     */
+    public function flatMapTo(ElementType|string $type, Closure $mapper): ListOf;
+
+    /**
+     * @template U
+     *
+     * @param Closure(T, int): U $mapper
+     *
+     * @return list<U>
+     */
+    public function mapToArray(Closure $mapper): array;
+
+    /**
+     * @template C of TypedList<mixed>
+     *
+     * @param class-string<C> $class
+     * @param Closure(T, int): mixed $mapper
+     *
+     * @return C
+     */
+    public function mapInto(string $class, Closure $mapper): TypedList;
+
+    /**
+     * Runs $callback on each element; a callback returning exactly false stops the loop.
+     *
+     * @param Closure(T, int): mixed $callback
+     *
+     * @return static this list
+     */
+    public function each(Closure $callback): self;
+
+    /**
+     * Passes this list to the first step, and each step's result to the next; without steps, returns this list.
+     *
+     * The steps stay untyped: each takes the previous step's result, which PHPDoc cannot chain over a variadic.
+     */
+    public function pipe(Closure ...$steps): mixed;
 }

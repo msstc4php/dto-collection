@@ -7,12 +7,14 @@ namespace MSSTC4PHP\DtoCollection;
 use MSSTC4PHP\DtoCollection\Behaviour\AggregatingBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\GenericReadingFacade;
 use MSSTC4PHP\DtoCollection\Behaviour\ListStorage;
+use MSSTC4PHP\DtoCollection\Behaviour\MappingBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\NumericBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\OrderingBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\ReadingBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\SearchingBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\SetOperationsBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\SlicingBehaviour;
+use MSSTC4PHP\DtoCollection\Behaviour\StructuringBehaviour;
 use MSSTC4PHP\DtoCollection\Behaviour\TextBehaviour;
 use MSSTC4PHP\DtoCollection\Equality\Equality;
 use MSSTC4PHP\DtoCollection\Equality\EqualityResolver;
@@ -47,6 +49,12 @@ final class ListOf implements ReadableList
 
     /** @use SetOperationsBehaviour<T> */
     use SetOperationsBehaviour;
+
+    /** @use StructuringBehaviour<T> */
+    use StructuringBehaviour;
+
+    /** @use MappingBehaviour<T> */
+    use MappingBehaviour;
 
     use NumericBehaviour;
     use TextBehaviour;
