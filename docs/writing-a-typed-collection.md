@@ -139,6 +139,6 @@ Methods that return the list declare `self`, never `static` (see odm.md for why)
 | `MutableList<T>` | the in-place mutators |
 | `TypedList<T>` | `fromArray`, `fromIterable`, `empty`: the element type is fixed by the class |
 
-`toMutable()`/`toImmutable()` return the generic `MutableListOf<T>`/`ListOf<T>`. When both
-variants of a DTO's list are generated, the generator may override them to return the paired
-class (a covariant return).
+`toMutable()`/`toImmutable()` return the generic `MutableListOf<T>`/`ListOf<T>`. Both are
+final, so a typed collection cannot narrow them to its paired class. Convert with the paired
+class's factory instead: `MutableItemList::fromIterable($items)`.
