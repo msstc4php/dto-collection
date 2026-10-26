@@ -136,12 +136,14 @@ final class ElementType
      * @param class-string<C> $class
      *
      * @return self<T&C>
+     *
+     * @throws InvalidElementType
      */
     public function andInstanceOf(string $class): self
     {
         $branch = $this->branches[0];
         if ($this->nullable || count($this->branches) !== 1 || !is_array($branch)) {
-            throw new InvalidElementType(sprintf('Only a class or an intersection can be intersected with %s, not %s', self::className($class), $this->describe()));
+            throw new InvalidElementType(sprintf('Only a class or an intersection can be intersected with %s, not %s', ltrim($class, '\\'), $this->describe()));
         }
 
         // intersection() validates the classes; its result is typed self<object>, hence the copy of its branches.

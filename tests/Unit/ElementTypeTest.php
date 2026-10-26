@@ -211,6 +211,12 @@ final class ElementTypeTest extends TestCase
 
         self::assertTrue($type->equals(ElementType::intersection(Countable::class, Traversable::class)));
         self::assertTrue($type->accepts(new ArrayObject()));
+        self::assertFalse($type->accepts(new class implements Countable {
+            public function count(): int
+            {
+                return 0;
+            }
+        }));
         self::assertFalse($type->isNullable());
     }
 
@@ -249,6 +255,15 @@ final class ElementTypeTest extends TestCase
         $this->expectExceptionMessage(sprintf('Only a class or an intersection can be intersected with Traversable, not %s', $described));
 
         $type->andInstanceOf(Traversable::class);
+    }
+
+    public function testAndInstanceOfReportsTheBranchBeforeAnUnknownClass(): void
+    {
+        $this->expectException(InvalidElementType::class);
+        $this->expectExceptionMessage('Only a class or an intersection can be intersected with No\\Such, not int');
+
+        // Reason: the test feeds a name that is deliberately not a class-string.
+        ElementType::integer()->andInstanceOf('\\No\\Such'); // @phpstan-ignore argument.type
     }
 
     public function testAndInstanceOfRejectsAnUnknownClass(): void
