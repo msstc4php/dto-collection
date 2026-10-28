@@ -1,5 +1,11 @@
 # dto-collection
 
+![Build Status](https://github.com/msstc4php/dto-collection/actions/workflows/ci.yml/badge.svg?branch=1.x)
+[![PHP Version](https://img.shields.io/badge/PHP-8.1%20%E2%80%93%208.4-787CB5?logo=php&logoColor=white)](https://php.net)
+[![PHPStan](https://img.shields.io/badge/PHPStan-level%20max-2a5ea7)](https://phpstan.org)
+[![Last commit](https://img.shields.io/github/last-commit/msstc4php/dto-collection/1.x)](https://github.com/msstc4php/dto-collection/commits/1.x)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Typed lists for PHP 8.1+. The element type is a native type hint of the list class, so PHP
 itself rejects a wrong element:
 
@@ -71,6 +77,10 @@ make test-odm  # ODM integration tests against MongoDB in Docker (port 27018)
 make infection # mutation testing
 ```
 
+## Security
+
+See [SECURITY.md](SECURITY.md).
+
 ## License
 
-MIT
+MIT, see [LICENSE](LICENSE).

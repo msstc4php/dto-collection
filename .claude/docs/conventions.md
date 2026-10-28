@@ -18,3 +18,10 @@
 - Check doctrine/collections 3 and the lowest dependencies in a scratch copy before changing
   the ODM signatures (`composer config platform.php 8.4.17 && composer update`, resp.
   `composer update --prefer-lowest`).
+
+## Repository files follow dto-generator
+
+`SECURITY.md` (with a "what it trusts" section), README badges plus Security/License
+sections, a Keep a Changelog `CHANGELOG.md` with `[x.y.z]` headings and compare links, and
+the CI jobs with the Composer cache steps are kept as in `../dto-generator`. Deliberate
+differences: PHP 8.1 floor, `--prefer-lowest` only on 8.1, ParallelConfig(4), no Docker image.

@@ -101,7 +101,17 @@ jobs:
           php-version: '8.4'
           extensions: mongodb
           coverage: none
+      - name: Locate the Composer cache
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v5
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-bc-${{ hashFiles('tools/composer.json') }}
+          restore-keys: composer-bc-
       - run: composer install --no-interaction --no-progress --working-dir=tools
+      # The public API is listed in .roave-backward-compatibility-check.xml, compared with the last stable release; an
+      # intended break gets an ignored-regex there in the same change.
       - run: |
           if ! base=$(git describe --tags --abbrev=0 --match 'v[0-9]*' --exclude='*-*' 2>/dev/null); then
             echo "No stable release tag yet: nothing to compare against."
