@@ -1,8 +1,10 @@
 # Changelog
 
-All notable changes to this project are documented here. Dates are UTC.
+All notable changes to this package are documented here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versions follow
+[Semantic Versioning](https://semver.org/); dates are UTC.
 
-## 1.1.0 - 2026-10-26
+## [1.1.0] - 2026-10-26
 
 ### Added
 
@@ -11,7 +13,7 @@ All notable changes to this project are documented here. Dates are UTC.
   types it as `ElementType<A&B>` instead of `ElementType<object>`. Generated collections of
   an intersection no longer need a `@phpstan-ignore`.
 
-## 1.0.0 - 2026-10-26
+## [1.0.0] - 2026-10-26
 
 First release, for PHP 8.1–8.4.
 
@@ -33,3 +35,6 @@ First release, for PHP 8.1–8.4.
 - The `#[TypedCollection]` attribute, which marks a class for `dto-collection-generator`.
 - `#[\NoDiscard]` on every value-returning method, so PHP 8.5 warns about an ignored
   `with*()` result.
+
+[1.1.0]: https://github.com/msstc4php/dto-collection/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/msstc4php/dto-collection/releases/tag/v1.0.0
